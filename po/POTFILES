@@ -1,0 +1,7 @@
+data/org.github.atheriel.snapshot-explorer.desktop.in
+data/org.github.atheriel.snapshot-explorer.appdata.xml.in
+data/org.github.atheriel.snapshot-explorer.gschema.xml
+src/main.vala
+src/window.vala
+src/zfs.vala
+

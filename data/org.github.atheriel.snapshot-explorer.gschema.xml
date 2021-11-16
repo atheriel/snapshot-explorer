@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2021 Aaron Jacobs
+ SPDX-License-Identifier: gpl-2-or-later
+-->
+
+<schemalist gettext-domain="snapshot-explorer">
+	<schema id="org.github.atheriel.snapshot-explorer" path="/org/github/atheriel/snapshot-explorer/">
+	</schema>
+</schemalist>

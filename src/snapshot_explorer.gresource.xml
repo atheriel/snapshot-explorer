@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2021 Aaron Jacobs
+ SPDX-License-Identifier: gpl-2-or-later
+-->
+
+<gresources>
+  <gresource prefix="/org/github/atheriel/snapshot-explorer">
+    <file>window.ui</file>
+  </gresource>
+</gresources>

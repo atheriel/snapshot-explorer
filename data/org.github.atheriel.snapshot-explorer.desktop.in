@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=snapshot-explorer
+Exec=snapshot-explorer
+Icon=org.github.atheriel.snapshot-explorer
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
