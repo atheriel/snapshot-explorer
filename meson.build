@@ -18,4 +18,10 @@ subdir('data')
 subdir('src')
 subdir('po')
 
+if get_option('enable-nautilus-extension') and get_option('flatpak')
+  warning('The Nautilus extension cannot run under Flatpak, skipping.')
+elif get_option('enable-nautilus-extension')
+  subdir('nautilus')
+endif
+
 meson.add_install_script('build-aux/meson/postinstall.py')

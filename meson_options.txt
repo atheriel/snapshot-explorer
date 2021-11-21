@@ -4,3 +4,9 @@ option(
   value: false,
   description: 'Whether the application is targeting Flatpak.'
 )
+option(
+  'enable-nautilus-extension',
+  type: 'boolean',
+  value: true,
+  description: 'Whether to build and install the Nautilus extension.'
+)
