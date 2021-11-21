@@ -6,6 +6,12 @@ project('snapshot-explorer', ['c', 'vala'],
   ],
 )
 
+add_project_arguments('--enable-experimental-non-null', language: 'vala')
+
+if get_option('flatpak')
+  add_project_arguments('-D', 'FLATPAK', language: 'vala')
+endif
+
 i18n = import('i18n')
 
 subdir('data')

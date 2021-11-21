@@ -19,12 +19,6 @@ snapshot_explorer_sources += gnome.compile_resources(
   c_name: 'snapshot_explorer'
 )
 
-if get_option('flatpak')
-  add_project_arguments('-D', 'FLATPAK', language: 'vala')
-endif
-
-add_project_arguments('--enable-experimental-non-null', language: 'vala')
-
 executable(
   'snapshot-explorer', snapshot_explorer_sources,
   vala_args: '--target-glib=2.50',
