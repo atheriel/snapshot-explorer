@@ -30,7 +30,7 @@ namespace Zfs {
 		var mountpoints = new List<string> ();
 		try {
 			var proc = new Subprocess.newv (argv, SubprocessFlags.STDOUT_PIPE);
-			var stream = new DataInputStream (proc.get_stdout_pipe ());
+			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
 			string? line;
 			while ((line = yield stream.read_line_async()) != null) {
 				mountpoints.append ((!) line);
@@ -145,7 +145,7 @@ namespace Zfs {
 		}
 		try {
 			var proc = new Subprocess.newv (argv, SubprocessFlags.STDOUT_PIPE);
-			var stream = new DataInputStream (proc.get_stdout_pipe ());
+			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
 			string? line;
 			// TODO: Handle malformed input instead of ignoring it.
 			while ((line = yield stream.read_line_async()) != null) {
