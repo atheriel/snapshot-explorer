@@ -6,6 +6,8 @@ snapshots using the system file manager (e.g. Nautilus on GNOME).
 It also includes a standalone Nautilus extension to enable easy restoration of
 earlier versions of a file from a ZFS snapshot.
 
+![Screenshot of the Nautilus extension](data/nautilus-screenshot.png?raw=true)
+
 Together these give an experience similar to Time Machine on macOS, the
 ["Previous Versions"
 feature](https://pureinfotech.com/enable-previous-versions-recover-files-windows-10/)
