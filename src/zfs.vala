@@ -5,10 +5,58 @@
  */
 
 namespace Zfs {
-	public struct Snapshot {
+	public class Snapshot {
 		public string name;
 		public string path;
 		public DateTime created;
+
+		public Snapshot (string name, string path, DateTime created) {
+			this.name = name;
+			this.path = path;
+			this.created = created;
+		}
+
+		public enum AgeRange {
+			TODAY,
+			YESTERDAY,
+			THIS_WEEK,
+			THIS_YEAR,
+			PREVIOUS_YEARS,
+		}
+
+		public struct Timestamp {
+			public string display;
+			public AgeRange range;
+		}
+
+		public Timestamp timestamp () {
+			var now = new DateTime.now_local ();
+			var hours_today = now.get_hour ();
+			var since = now.difference (created);
+			string timestamp = created.format ("%X");
+			string day;
+			AgeRange range;
+			if (since < TimeSpan.HOUR * hours_today) {
+				day = "Today";
+				range = AgeRange.TODAY;
+			} else if (since < TimeSpan.HOUR * (hours_today + 24)) {
+				day = "Yesterday";
+				range = AgeRange.YESTERDAY;
+			} else if (since < TimeSpan.HOUR * (hours_today + 6 * 24)) {
+				day = created.format ("%A");
+				range = AgeRange.THIS_WEEK;
+			} else if (since < TimeSpan.DAY * now.get_day_of_year ()) {
+				day = created.format ("%b %-e");
+				range = AgeRange.THIS_YEAR;
+			} else {
+				day = created.format ("%Y-%m-%d");
+				range = AgeRange.PREVIOUS_YEARS;
+			}
+			return {
+				"%s at %s".printf (day, timestamp),
+				range,
+			};
+		}
 	}
 
 	public async Node<string>? mountpoint_tree () {
@@ -126,8 +174,8 @@ namespace Zfs {
 		return (owned) root;
 	}
 
-	public async List<Snapshot?> snapshots_for_path (string path) {
-		var result = new List<Snapshot?> ();
+	public async List<Snapshot> snapshots_for_path (string path) {
+		var result = new List<Snapshot> ();
 		if (!yield has_zfs_utils ()) {
 			return (owned) result;
 		}
@@ -161,13 +209,13 @@ namespace Zfs {
 				if (!int64.try_parse (columns[1], out created)) {
 					continue;
 				}
-				result.append (Snapshot () {
-					name = name[1],
-					path = Path.build_filename (
+				result.append (new Snapshot (
+					name[1],
+					Path.build_filename (
 						"file://", path, ".zfs/snapshot", name[1]
 					),
-					created = new DateTime.from_unix_local ((!) created)
-				});
+					new DateTime.from_unix_local ((!) created)
+				));
 			}
 		} catch (Error e) {
 			// TODO: Better error reporting.

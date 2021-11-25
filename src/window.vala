@@ -194,8 +194,6 @@ namespace SnapshotExplorer {
 				snapshots.show_all ();
 				return;
 			}
-			var now = new DateTime.now_local ();
-			var hours_today = now.get_hour ();
 			var today = new List<Hdy.ActionRow> ();
 			var yesterday = new List<Hdy.ActionRow> ();
 			var this_week = new List<Hdy.ActionRow> ();
@@ -225,26 +223,25 @@ namespace SnapshotExplorer {
 					row.activatable_widget = open;
 					row.add (open);
 				}
-				string timestamp = entry.created.format ("%X");
-				string day;
-				var since = now.difference (entry.created);
-				if (since < TimeSpan.HOUR * hours_today) {
-					day = "Today";
+				var ts = entry.timestamp ();
+				row.title = ts.display;
+				switch (ts.range) {
+				case Zfs.Snapshot.AgeRange.TODAY:
 					today.append (row);
-				} else if (since < TimeSpan.HOUR * (hours_today + 24)) {
-					day = "Yesterday";
+					break;
+				case Zfs.Snapshot.AgeRange.YESTERDAY:
 					yesterday.append (row);
-				} else if (since < TimeSpan.HOUR * (hours_today + 6 * 24)) {
-					day = entry.created.format ("%A");
+					break;
+				case Zfs.Snapshot.AgeRange.THIS_WEEK:
 					this_week.append (row);
-				} else if (since < TimeSpan.DAY * now.get_day_of_year ()) {
-					day = entry.created.format ("%b %-e");
+					break;
+				case Zfs.Snapshot.AgeRange.THIS_YEAR:
 					this_year.append (row);
-				} else {
-					day = entry.created.format ("%Y-%m-%d");
+					break;
+				default:
 					older.append (row);
+					break;
 				}
-				row.title = "%s at %s".printf(day, timestamp);
 			});
 
 			maybe_add_snapshot_rows (today, "Today");
