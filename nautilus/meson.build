@@ -1,6 +1,7 @@
 extension_sources = [
   'shim.c',
   'extension.vala',
+  'zfs.vala',
   '../vapi/nautilus.vapi',
 ]
 
