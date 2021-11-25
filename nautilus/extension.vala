@@ -1,6 +1,8 @@
 class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 	private Gtk.InfoBar bar;
 	private Gtk.Label label;
+	private Cancellable cancellable;
+	private Zfs.Snapshot? snapshot;
 
 	construct {
 		label = new Gtk.Label ("") {
@@ -12,18 +14,43 @@ class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 		bar = new Gtk.InfoBar ();
 		var container = bar.get_content_area ();
 		container.add (label);
+		cancellable = new Cancellable ();
 	}
 
 	public virtual Gtk.Widget? get_widget (string uri, Gtk.Widget window) {
 		if (!uri.contains ("file://") || !is_snapshot_path (uri)) {
 			return null;
 		}
-		var current = current_uri_from_snapshot (uri);
-		label.label = "Browsing a read-only snapshot of %s".printf (
-			current.replace ("file://", "")
+		var current = current_uri_from_snapshot (uri).replace ("file://", "");
+		cancellable.cancel ();
+		cancellable.reset ();
+		fetch_snapshot_metadata.begin (current, snapshot_name_from_uri (uri));
+		return bar;
+	}
+
+	private async void fetch_snapshot_metadata (string path, string? name) {
+		bool cancelled = false;
+		cancellable.cancelled.connect (() => {
+			cancelled = true;
+		});
+		var snapshots = yield Zfs.snapshots_for_path (path);
+		if (cancelled) {
+			return;
+		}
+		snapshot = null;
+		foreach (var s in snapshots) {
+			if (s.name.ascii_casecmp ((!) name) == 0) {
+				snapshot = s;
+				break;
+			}
+		}
+		if (snapshot == null) {
+			return;
+		}
+		label.label = "Browsing snapshot of %s on %s.".printf (
+			path, ((!) snapshot).timestamp ().display
 		);
 		bar.show_all ();
-		return bar;
 	}
 }
 
@@ -109,6 +136,19 @@ string current_uri_from_snapshot (string uri) {
 		current = string.join ("/", parts[0], suffix[1]);
 	}
 	return current;
+}
+
+string? snapshot_name_from_uri (string uri) {
+	// TODO: This will work for ZFS but BTRFS support would require more work.
+	var parts = uri.split ("/.zfs/snapshot/");
+	if (parts.length != 2) {
+		return null;
+	}
+	var suffix = parts[1].split ("/", 2);
+	if (suffix.length == 0) {
+		return null;
+	}
+	return suffix[0];
 }
 
 [ModuleInit]
