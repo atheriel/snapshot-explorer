@@ -3,6 +3,8 @@
 Snapshot Explorer is a work-in-progress GTK-based application for browsing ZFS
 snapshots using the system file manager (e.g. Nautilus on GNOME).
 
+![Screenshot of the application](data/screenshot.png?raw=true)
+
 It also includes a standalone Nautilus extension to enable easy restoration of
 earlier versions of a file from a ZFS snapshot.
 
