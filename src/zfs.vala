@@ -67,12 +67,12 @@ namespace Zfs {
 		if (sandboxed ()) {
 			argv = {
 				"flatpak-spawn", "--host", "zfs", "list", "-Hp", "-t",
-				"filesystem", "-o", "mountpoint", "-s", "mountpoint"
+				"filesystem", "-o", "mountpoint,canmount", "-s", "mountpoint"
 			};
 		} else {
 			argv = {
-				"zfs", "list", "-Hp", "-t", "filesystem", "-o", "mountpoint",
-				"-s", "mountpoint"
+				"zfs", "list", "-Hp", "-t", "filesystem", "-o",
+				"mountpoint,canmount", "-s", "mountpoint"
 			};
 		}
 		var mountpoints = new List<string> ();
@@ -81,11 +81,17 @@ namespace Zfs {
 			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
 			string? line;
 			while ((line = yield stream.read_line_async()) != null) {
-				if (((!) line).ascii_casecmp ("none") == 0) {
+				string[] columns = ((!) line).split("\t");
+				if (columns.length != 2) {
 					continue;
 				}
-				mountpoints.append ((!) line);
-				// print ("mountpoint: %s\n", line);
+				if (columns[0].ascii_casecmp ("none") == 0) {
+					continue;
+				}
+				if (columns[1].ascii_casecmp ("off") == 0) {
+					continue;
+				}
+				mountpoints.append (columns[0]);
 			}
 		} catch (Error e) {
 			// TODO: Better error reporting.
