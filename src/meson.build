@@ -11,14 +11,6 @@ snapshot_explorer_deps = [
   dependency('libhandy-1', version: '>=1.0'),
 ]
 
-gnome = import('gnome')
-
-snapshot_explorer_sources += gnome.compile_resources(
-  'snapshot_explorer-resources',
-  'snapshot_explorer.gresource.xml',
-  c_name: 'snapshot_explorer'
-)
-
 executable(
   'snapshot-explorer', snapshot_explorer_sources,
   vala_args: '--target-glib=2.50',
