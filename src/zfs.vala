@@ -81,6 +81,9 @@ namespace Zfs {
 			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
 			string? line;
 			while ((line = yield stream.read_line_async()) != null) {
+				if (((!) line).ascii_casecmp ("none") == 0) {
+					continue;
+				}
 				mountpoints.append ((!) line);
 				// print ("mountpoint: %s\n", line);
 			}
