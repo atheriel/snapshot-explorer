@@ -1,8 +1,9 @@
 [Desktop Entry]
-Name=snapshot-explorer
+Name=Snapshot Explorer
+Comment=Browse local ZFS snapshots using the system file manager
 Exec=snapshot-explorer
 Icon=org.github.atheriel.snapshot-explorer
 Terminal=false
 Type=Application
-Categories=GTK;
+Categories=GTK;Utility;FileTools;Filesystem
 StartupNotify=true

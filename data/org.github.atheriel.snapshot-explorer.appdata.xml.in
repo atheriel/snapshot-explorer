@@ -2,7 +2,6 @@
 <component type="desktop">
 	<id>org.github.atheriel.snapshot-explorer.desktop</id>
 	<metadata_license>CC0-1.0</metadata_license>
-	<project_license>GPL-3.0-or-later</project_license>
-	<description>
-	</description>
+	<project_license>LGPL-2.1-or-later AND GPL-3.0-or-later</project_license>
+	<summary>Browse local ZFS snapshots</summary>
 </component>
