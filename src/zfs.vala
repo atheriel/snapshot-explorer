@@ -37,10 +37,10 @@ namespace Zfs {
 			string day;
 			AgeRange range;
 			if (since < TimeSpan.HOUR * hours_today) {
-				day = "Today";
+				day = _("Today");
 				range = AgeRange.TODAY;
 			} else if (since < TimeSpan.HOUR * (hours_today + 24)) {
-				day = "Yesterday";
+				day = _("Yesterday");
 				range = AgeRange.YESTERDAY;
 			} else if (since < TimeSpan.HOUR * (hours_today + 6 * 24)) {
 				day = created.format ("%A");
@@ -53,7 +53,7 @@ namespace Zfs {
 				range = AgeRange.PREVIOUS_YEARS;
 			}
 			return {
-				"%s at %s".printf (day, timestamp),
+				_("%s at %s").printf (day, timestamp),
 				range,
 			};
 		}

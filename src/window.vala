@@ -28,7 +28,7 @@ namespace SnapshotExplorer {
 
 		construct {
 			var titlebar = new Gtk.HeaderBar () {
-				title = "Snapshot Explorer",
+				title = _("Snapshot Explorer"),
 				show_close_button = true
 			};
 			set_titlebar (titlebar);
@@ -38,7 +38,7 @@ namespace SnapshotExplorer {
 			titlebar.pack_start(back);
 
 			var refresh = new Gtk.Button.from_icon_name ("view-refresh-symbolic") {
-				tooltip_text = "Refresh the folder list."
+				tooltip_text = _("Refresh the folder list.")
 			};
 			refresh.clicked.connect(on_refresh);
 			titlebar.pack_start(refresh);
@@ -55,7 +55,7 @@ namespace SnapshotExplorer {
 
 			var sidebar_container = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 			sidebar_container.set_size_request (200, -1);
-			sidebar_container.pack_start (new Gtk.Label ("Folders") {
+			sidebar_container.pack_start (new Gtk.Label (_("Folders")) {
 				justify = Gtk.Justification.LEFT,
 				xalign = 0,
 				margin_bottom = 6,
@@ -66,7 +66,7 @@ namespace SnapshotExplorer {
 				selection_mode = Gtk.SelectionMode.NONE
 			};
 			folders.set_placeholder (new Hdy.ActionRow () {
-				title = "No snapshot-capable folders found."
+				title = _("No snapshot-capable folders found.")
 			});
 			folders.row_selected.connect((row) => {
 				print("row selected\n");
@@ -99,7 +99,7 @@ namespace SnapshotExplorer {
 			});
 
 			help_container.pack_start (new Gtk.Label (null) {
-				label = "Missing something?",
+				label = _("Missing something?"),
 				justify = Gtk.Justification.LEFT,
 				xalign = 0,
 				margin_bottom = 6,
@@ -117,7 +117,7 @@ namespace SnapshotExplorer {
 			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 			snapshots_clamp.add (snapshots);
 			snapshots.pack_start (new Gtk.Label (null) {
-				label = "Choose a folder to view snapshots, if any.",
+				label = _("Choose a folder to view snapshots, if any."),
 				hexpand = true
 			}, false, false, 0);
 
@@ -154,7 +154,7 @@ namespace SnapshotExplorer {
 			});
 			if (zroot != null) {
 				((!) zroot).children_foreach(TraverseFlags.ALL, (n) => {
-					folders.add (build_row_for_node (n, "ZFS Dataset"));
+					folders.add (build_row_for_node (n, _("ZFS Dataset")));
 				});
 			}
 			folders.show_all ();
@@ -188,7 +188,7 @@ namespace SnapshotExplorer {
 			});
 			if (entries.length () == 0) {
 				snapshots.pack_start (new Gtk.Label (null) {
-					label = "No snapshots found.",
+					label = _("No snapshots found."),
 					hexpand = true
 				}, false, false, 0);
 				snapshots.show_all ();
@@ -202,11 +202,11 @@ namespace SnapshotExplorer {
 			entries.@foreach ((e) => {
 				Zfs.Snapshot entry = (!) e;
 				var row = new Hdy.ActionRow () {
-					subtitle = "ZFS Snapshot: %s".printf(entry.name)
+					subtitle = _("ZFS Snapshot: %s").printf(entry.name)
 				};
 				if (fm != null) {
 					var open = new Gtk.Button.from_icon_name ("folder") {
-						label = "Browse",
+						label = _("Browse"),
 						always_show_image = true,
 						margin_top = 6,
 						margin_bottom = 6
@@ -244,11 +244,11 @@ namespace SnapshotExplorer {
 				}
 			});
 
-			maybe_add_snapshot_rows (today, "Today");
-			maybe_add_snapshot_rows (yesterday, "Yesterday");
-			maybe_add_snapshot_rows (this_week, "Earlier This Week");
-			maybe_add_snapshot_rows (this_year, "Earlier This Year");
-			maybe_add_snapshot_rows (older, "Previous Years");
+			maybe_add_snapshot_rows (today, _("Today"));
+			maybe_add_snapshot_rows (yesterday, _("Yesterday"));
+			maybe_add_snapshot_rows (this_week, _("Earlier This Week"));
+			maybe_add_snapshot_rows (this_year, _("Earlier This Year"));
+			maybe_add_snapshot_rows (older, _("Previous Years"));
 
 			snapshots.show_all ();
 		}

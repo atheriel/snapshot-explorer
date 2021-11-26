@@ -1,1 +1,1 @@
-i18n.gettext('snapshot-explorer', preset: 'glib')
+i18n.gettext(meson.project_name(), preset: 'glib')

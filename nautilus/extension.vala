@@ -53,7 +53,7 @@ class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 		if (snapshot == null) {
 			return;
 		}
-		label.label = "Browsing snapshot of %s on %s.".printf (
+		label.label = _("Browsing snapshot of %s on %s.").printf (
 			path, ((!) snapshot).timestamp ().display
 		);
 		bar.show_all ();
@@ -72,13 +72,13 @@ class SnapshotMenuProvider : Nautilus.MenuProvider, Object {
 			return null;
 		}
 		var item = new Nautilus.MenuItem(
-			"restore-to", "Restore to...",
-			"Restore this item from the snapshot."
+			"restore-to", _("Restore to..."),
+			_("Restore this item from the snapshot.")
 		);
 		item.activate.connect(() => {
 			var dialog = new Gtk.FileChooserNative(
-				"Select Restore Destination", (Gtk.Window) window,
-				Gtk.FileChooserAction.SAVE, "Restore", "Close"
+				_("Select Restore Destination"), (Gtk.Window) window,
+				Gtk.FileChooserAction.SAVE, _("Restore"), _("Close")
 			);
 			var parent = current_uri_from_snapshot (file.get_parent_uri ());
 			dialog.set_current_folder_uri (parent);
