@@ -329,17 +329,18 @@ namespace SnapshotExplorer {
 			if (!path.has_prefix ("/home")) {
 				return "folder";
 			}
-			if (path.has_suffix("Documents")) {
+			var theme = Gtk.IconTheme.get_default ();
+			if (path.has_suffix("Documents") && theme.has_icon ("folder-documents")) {
 				return "folder-documents";
-			} else if (path.has_suffix("Downloads")) {
+			} else if (path.has_suffix("Downloads") && theme.has_icon ("folder-downloads")) {
 				return "folder-downloads";
-			} else if (path.has_suffix("Music")) {
+			} else if (path.has_suffix("Music") && theme.has_icon ("folder-music")) {
 				return "folder-music";
-			} else if (path.has_suffix("Pictures")) {
+			} else if (path.has_suffix("Pictures") && theme.has_icon ("folder-pictures")) {
 				return "folder-pictures";
-			} else if (path.has_suffix("Videos")) {
+			} else if (path.has_suffix("Videos") && theme.has_icon ("folder-videos")) {
 				return "folder-videos";
-			} else if (path.split("/").length == 3) {
+			} else if (path.split("/").length == 3 && theme.has_icon ("folder-home")) {
 				// E.g. "/home/user".
 				return "folder-home";
 			}
