@@ -13,6 +13,10 @@ namespace SnapshotExplorer {
 		string? current_path;
 		FileManager1? fm = null;
 
+		const ActionEntry[] ACTION_ENTRIES = {
+			{ "refresh", on_refresh }
+		};
+
 		public Window (Gtk.Application app) {
 			Object (
 				application: app,
@@ -27,6 +31,11 @@ namespace SnapshotExplorer {
 		}
 
 		construct {
+			add_action_entries (ACTION_ENTRIES, this);
+
+			var app = (Gtk.Application) GLib.Application.get_default ();
+			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
+
 			var titlebar = new Gtk.HeaderBar () {
 				title = _("Snapshot Explorer"),
 				show_close_button = true
@@ -38,9 +47,9 @@ namespace SnapshotExplorer {
 			titlebar.pack_start(back);
 
 			var refresh = new Gtk.Button.from_icon_name ("view-refresh-symbolic") {
-				tooltip_text = _("Refresh the folder list.")
+				tooltip_text = _("Refresh the folder list."),
+				action_name = "win.refresh"
 			};
-			refresh.clicked.connect(on_refresh);
 			titlebar.pack_start(refresh);
 
 			// var menu = new Menu();
