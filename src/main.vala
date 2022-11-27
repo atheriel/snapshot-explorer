@@ -17,5 +17,10 @@ int main (string[] args) {
 		win.present ();
 	});
 
+	var quit = new SimpleAction ("quit", null);
+	app.add_action (quit);
+	app.set_accels_for_action ("app.quit", {"<Control>q", "<Control>w"});
+	quit.activate.connect (app.quit);
+
 	return app.run (args);
 }
