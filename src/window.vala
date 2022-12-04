@@ -54,15 +54,19 @@ namespace SnapshotExplorer {
 			};
 			titlebar.pack_start(refresh);
 
-			// var menu = new Menu();
-			// menu.append("Keyboard Shortcuts", "app.shortcuts");
-			// menu.append("About System Information", "app.about");
-			// var menu_button = new Gtk.MenuButton() {
-			//	   use_popover = true,
-			//	   menu_model = menu,
-			// };
-			// menu_button.add (new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.BUTTON));
-			// titlebar.pack_end(menu_button);
+			var menu = new Menu ();
+			var item = new MenuItem (_("Keyboard Shortcuts"), "win.shortcuts");
+			item.set_attribute ("accel", "s", "<Control>question");
+			menu.append_item (item);
+			item = new MenuItem (_("Quit"), "app.quit");
+			item.set_attribute ("accel", "s", "<Control>q");
+			menu.append_item (item);
+			var menu_button = new Gtk.MenuButton() {
+				use_popover = true,
+				menu_model = menu,
+			};
+			menu_button.add (new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.BUTTON));
+			titlebar.pack_end(menu_button);
 
 			var sidebar_container = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 			sidebar_container.set_size_request (200, -1);
