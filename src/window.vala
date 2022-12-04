@@ -14,7 +14,8 @@ namespace SnapshotExplorer {
 		FileManager1? fm = null;
 
 		const ActionEntry[] ACTION_ENTRIES = {
-			{ "refresh", on_refresh }
+			{ "refresh", on_refresh },
+			{ "shortcuts", on_shortcuts },
 		};
 
 		public Window (Gtk.Application app) {
@@ -35,6 +36,7 @@ namespace SnapshotExplorer {
 
 			var app = (Gtk.Application) GLib.Application.get_default ();
 			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
+			app.set_accels_for_action ("win.shortcuts", {"<Control>question"});
 
 			var titlebar = new Gtk.HeaderBar () {
 				title = _("Snapshot Explorer"),
@@ -272,6 +274,13 @@ namespace SnapshotExplorer {
 			} else {
 				refresh_snapshots.begin ();
 			}
+		}
+
+		private void on_shortcuts () {
+			var win = new ShortcutsWindow ();
+			win.set_transient_for (this);
+			win.show_all ();
+			win.present ();
 		}
 
 		private void open_snapshots_for_path (string path) {
