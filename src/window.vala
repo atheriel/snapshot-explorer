@@ -83,8 +83,10 @@ namespace SnapshotExplorer {
 			folders = new Gtk.ListBox () {
 				selection_mode = Gtk.SelectionMode.NONE
 			};
-			folders.set_placeholder (new Hdy.ActionRow () {
-				title = _("No snapshot-capable folders found.")
+			folders.set_placeholder (new Hdy.StatusPage () {
+				description = _("No mounted ZFS filesystems found."),
+				icon_name = "drive-multidisk-symbolic",
+				visible = true,
 			});
 			folders.row_selected.connect((row) => {
 				print("row selected\n");
@@ -94,35 +96,6 @@ namespace SnapshotExplorer {
 			};
 			folders_container.add (folders);
 			sidebar_container.pack_start (folders_container, true, true, 0);
-			var help_container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
-			help_container.get_style_context ().add_class ("background");
-			sidebar_container.pack_start (help_container, false, false, 0);
-
-			var help = new Gtk.Button.from_icon_name ("help-faq-symbolic", Gtk.IconSize.MENU) {
-				margin_left = 3,
-				// margin_top = 6,
-				margin_bottom = 6,
-				relief = Gtk.ReliefStyle.NONE
-			};
-			help_container.pack_start (help, false, true, 0);
-			var help_popover = new Gtk.Popover (help) {
-				constrain_to = Gtk.PopoverConstraint.WINDOW,
-				modal = true,
-				visible = false
-			};
-			help_popover.add (new Gtk.Label ("hello"));
-			help.clicked.connect(() => {
-				help_popover.popup ();
-				help_popover.show_all ();
-			});
-
-			help_container.pack_start (new Gtk.Label (null) {
-				label = _("Missing something?"),
-				justify = Gtk.Justification.LEFT,
-				xalign = 0,
-				margin_bottom = 6,
-				margin_top = 6
-			}, false, false, 0);
 
 			var snapshots_clamp = new Hdy.Clamp () {
 				maximum_size = 500,
@@ -134,10 +107,12 @@ namespace SnapshotExplorer {
 			};
 			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 			snapshots_clamp.add (snapshots);
-			snapshots.pack_start (new Gtk.Label (null) {
-				label = _("Choose a folder to view snapshots, if any."),
-				hexpand = true
-			}, false, false, 0);
+			snapshots.pack_start (new Hdy.StatusPage () {
+				title = _("Select a Folder"),
+				description = _("Choose a folder from a mounted ZFS filesystem\nto view snapshots."),
+				icon_name = "folder-symbolic",
+				vexpand = true,
+			});
 
 			var pane_container = new Gtk.ScrolledWindow (null, null) {
 				hscrollbar_policy = Gtk.PolicyType.NEVER
