@@ -44,12 +44,14 @@ namespace SnapshotExplorer {
 			};
 			set_titlebar (titlebar);
 
-			back = new Gtk.Button.from_icon_name ("go-previous-symbolic");
+			back = new Gtk.Button.from_icon_name ("go-previous-symbolic") {
+				tooltip_text = _("Back to folders"),
+			};
 			back.clicked.connect(on_back);
 			titlebar.pack_start(back);
 
 			var refresh = new Gtk.Button.from_icon_name ("view-refresh-symbolic") {
-				tooltip_text = _("Refresh the folder list."),
+				tooltip_text = _("Refresh folder list"),
 				action_name = "win.refresh"
 			};
 			titlebar.pack_start(refresh);
@@ -62,6 +64,7 @@ namespace SnapshotExplorer {
 			item.set_attribute ("accel", "s", "<Control>q");
 			menu.append_item (item);
 			var menu_button = new Gtk.MenuButton() {
+				tooltip_text = _("Menu"),
 				use_popover = true,
 				menu_model = menu,
 			};
