@@ -9,7 +9,7 @@ namespace SnapshotExplorer {
 		Gtk.Button back;
 		Gtk.ListBox folders;
 		Gtk.Box snapshots;
-		Hdy.Leaflet content;
+		Adw.Leaflet content;
 		string? current_path;
 		FileManager1? fm = null;
 
@@ -21,14 +21,14 @@ namespace SnapshotExplorer {
 		public Window (Gtk.Application app) {
 			Object (
 				application: app,
-				title: "Snapshot Explorer",
+				title: _("Snapshot Explorer"),
 				default_height: 500,
 				default_width: 760
 			);
 		}
 
 		static construct {
-			Hdy.init ();
+			Adw.init ();
 		}
 
 		construct {
@@ -39,8 +39,7 @@ namespace SnapshotExplorer {
 			app.set_accels_for_action ("win.shortcuts", {"<Control>question"});
 
 			var titlebar = new Gtk.HeaderBar () {
-				title = _("Snapshot Explorer"),
-				show_close_button = true
+				show_title_buttons = true
 			};
 			set_titlebar (titlebar);
 
@@ -63,62 +62,64 @@ namespace SnapshotExplorer {
 			item = new MenuItem (_("Quit"), "app.quit");
 			item.set_attribute ("accel", "s", "<Control>q");
 			menu.append_item (item);
-			var menu_button = new Gtk.MenuButton() {
+			titlebar.pack_end(new Gtk.MenuButton() {
 				tooltip_text = _("Menu"),
-				use_popover = true,
+				icon_name = "open-menu-symbolic",
 				menu_model = menu,
-			};
-			menu_button.add (new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.BUTTON));
-			titlebar.pack_end(menu_button);
+			});
 
 			folders = new Gtk.ListBox () {
 				selection_mode = Gtk.SelectionMode.NONE,
 				vexpand = true,
+				css_classes = {"navigation-sidebar"},
 			};
-			folders.get_style_context ().add_class ("sidebar");
-			folders.set_placeholder (new Hdy.StatusPage () {
+			folders.set_placeholder (new Adw.StatusPage () {
 				description = _("No mounted ZFS filesystems found."),
 				icon_name = "drive-multidisk-symbolic",
 				visible = true,
 			});
 
-			var snapshots_clamp = new Hdy.Clamp () {
-				maximum_size = 500,
-				tightening_threshold = 400,
-				margin_top = 14,
-				margin_start = 12,
-				margin_end = 12
-			};
 			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
-			snapshots_clamp.add (snapshots);
-			snapshots.pack_start (new Hdy.StatusPage () {
+			snapshots.append (new Adw.StatusPage () {
 				title = _("Select a Folder"),
 				description = _("Choose a folder from a mounted ZFS filesystem\nto view snapshots."),
 				icon_name = "folder-symbolic",
 				vexpand = true,
 			});
 
-			var sidebar_container = new Gtk.ScrolledWindow (null, null) {
+			var sidebar_container = new Gtk.ScrolledWindow () {
 				width_request = 200,
 				hscrollbar_policy = Gtk.PolicyType.NEVER,
 				hexpand = true,
+				child = folders,
 			};
-			sidebar_container.add (folders);
 
-			var pane_container = new Gtk.ScrolledWindow (null, null) {
-				hscrollbar_policy = Gtk.PolicyType.NEVER
+			var pane_container = new Gtk.ScrolledWindow () {
+				hscrollbar_policy = Gtk.PolicyType.NEVER,
+				width_request = 500,
+				hexpand = true,
+				child = new Adw.Clamp () {
+					maximum_size = 500,
+					tightening_threshold = 400,
+					margin_top = 14,
+					margin_start = 12,
+					margin_end = 12,
+					child = snapshots,
+				},
 			};
-			pane_container.set_size_request (500, -1);
-			pane_container.add (snapshots_clamp);
 
-			content = new Hdy.Leaflet () {
-				transition_type = Hdy.LeafletTransitionType.SLIDE
+			content = new Adw.Leaflet () {
+				transition_type = Adw.LeafletTransitionType.SLIDE
 			};
-			content.add_with_properties (sidebar_container, "name", "sidebar");
-			content.add (new Gtk.Separator (Gtk.Orientation.VERTICAL));
-			content.add_with_properties (pane_container, "name", "pane");
-			content.set_visible_child (sidebar_container);
-			add (content);
+			var page = content.append (sidebar_container);
+			page.name = "sidebar";
+			page = content.append (new Gtk.Separator (Gtk.Orientation.VERTICAL));
+			page.name = "separator";
+			page.navigatable = false;
+			page = content.append (pane_container);
+			page.name = "pane";
+			content.set_visible_child_name ("sidebar");
+			child = content;
 
 			content.notify["visible-child"].connect((s, p) => {
 				update_titlebar ();
@@ -133,28 +134,25 @@ namespace SnapshotExplorer {
 
 		private async void refresh_folders () {
 			var zroot = yield Zfs.mountpoint_tree ();
-			folders.@foreach((child) => {
-				folders.remove (child);
-			});
+			Gtk.Widget? child = folders.get_first_child ();
+			while (child != null) {
+				folders.remove ((!) child);
+				child = folders.get_first_child ();
+			}
 			if (zroot != null) {
 				var header = new Gtk.ListBoxRow () {
 					selectable = false,
 					activatable = false,
+					child = new Gtk.Label (_("Folders")) {
+						xalign = 0,
+						css_classes = {"heading"},
+					},
 				};
-				var header_label = new Gtk.Label (_("Folders")) {
-					xalign = 0,
-					margin_bottom = 6,
-					margin_start = 6,
-					margin_top = 14,
-				};
-				header_label.get_style_context ().add_class ("heading");
-				header.add (header_label);
-				folders.add (header);
+				folders.append (header);
 				((!) zroot).children_foreach(TraverseFlags.ALL, (n) => {
-					folders.add (build_row_for_node (n, _("ZFS Dataset")));
+					folders.append (build_row_for_node (n, _("ZFS Dataset")));
 				});
 			}
-			folders.show_all ();
 		}
 
 		private async void start_bus () {
@@ -180,25 +178,26 @@ namespace SnapshotExplorer {
 				return;
 			}
 			var entries = yield Zfs.snapshots_for_path ((!) current_path);
-			snapshots.@foreach ((child) => {
-				snapshots.remove (child);
-			});
+			Gtk.Widget? child = snapshots.get_first_child ();
+			while (child != null) {
+				snapshots.remove ((!) child);
+				child = snapshots.get_first_child ();
+			}
 			if (entries.length () == 0) {
-				snapshots.pack_start (new Gtk.Label (null) {
+				snapshots.append (new Gtk.Label (null) {
 					label = _("No snapshots found."),
 					hexpand = true
-				}, false, false, 0);
-				snapshots.show_all ();
+				});
 				return;
 			}
-			var today = new List<Hdy.ActionRow> ();
-			var yesterday = new List<Hdy.ActionRow> ();
-			var this_week = new List<Hdy.ActionRow> ();
-			var this_year = new List<Hdy.ActionRow> ();
-			var older = new List<Hdy.ActionRow> ();
+			var today = new List<Adw.ActionRow> ();
+			var yesterday = new List<Adw.ActionRow> ();
+			var this_week = new List<Adw.ActionRow> ();
+			var this_year = new List<Adw.ActionRow> ();
+			var older = new List<Adw.ActionRow> ();
 			entries.@foreach ((e) => {
 				Zfs.Snapshot entry = (!) e;
-				var row = new Hdy.ActionRow () {
+				var row = new Adw.ActionRow () {
 					subtitle = _("ZFS Snapshot: %s").printf(entry.name)
 				};
 				if (fm != null) {
@@ -208,7 +207,6 @@ namespace SnapshotExplorer {
 						margin_top = 6,
 						margin_bottom = 6
 					};
-					open.get_style_context ().add_class ("list-button");
 					open.clicked.connect(() => {
 						try {
 							((!) fm).show_folders({ entry.path }, "");
@@ -218,7 +216,7 @@ namespace SnapshotExplorer {
 						};
 					});
 					row.activatable_widget = open;
-					row.add (open);
+					row.add_suffix (open);
 				}
 				var ts = entry.timestamp ();
 				row.title = ts.display;
@@ -246,8 +244,6 @@ namespace SnapshotExplorer {
 			maybe_add_snapshot_rows (this_week, _("Earlier This Week"));
 			maybe_add_snapshot_rows (this_year, _("Earlier This Year"));
 			maybe_add_snapshot_rows (older, _("Previous Years"));
-
-			snapshots.show_all ();
 		}
 
 		private void on_back () {
@@ -288,44 +284,42 @@ namespace SnapshotExplorer {
 				open_snapshots_for_path (path);
 			});
 			if (node.n_children () == 0) {
-				var row = new Hdy.ActionRow () {
+				var row = new Adw.ActionRow () {
 					title = node.data,
 					subtitle = flavour,
 					icon_name = icon_name_for_path (node.data),
 					activatable_widget = open
 				};
-				row.add (open);
+				row.add_suffix (open);
 				return (owned) row;
 			}
-			var row = new Hdy.ExpanderRow () {
+			var row = new Adw.ExpanderRow () {
 				title = node.data,
 				subtitle = flavour,
 				expanded = false,
 				icon_name = icon_name_for_path (node.data)
 			};
-			row.add_action (open);
 			node.children_foreach(TraverseFlags.ALL, (child_node) => {
 				var child_row = build_row_for_node (child_node, flavour);
-				row.add (child_row);
+				row.add_row (child_row);
 			});
 			return (owned) row;
 		}
 
-		void maybe_add_snapshot_rows (List<Hdy.ActionRow>? rows, string title) {
+		void maybe_add_snapshot_rows (List<Adw.ActionRow>? rows, string title) {
 			if (rows != null) {
-				var header = new Gtk.Label (title) {
+				snapshots.append (new Gtk.Label (title) {
 					xalign = 0,
-				};
-				header.get_style_context ().add_class ("heading");
-				snapshots.pack_start (header, false, false, 0);
+					css_classes = {"heading"},
+				});
 				var list = new Gtk.ListBox () {
 					selection_mode = Gtk.SelectionMode.NONE,
-					margin_bottom = 24
+					margin_bottom = 24,
+					css_classes = {"boxed-list"},
 				};
-				list.get_style_context ().add_class ("content");
-				snapshots.pack_start (list, false, false, 0);
+				snapshots.append (list);
 				((!) rows).@foreach ((row) => {
-					list.add (row);
+					list.append (row);
 				});
 			}
 		}
@@ -334,7 +328,7 @@ namespace SnapshotExplorer {
 			if (!path.has_prefix ("/home")) {
 				return "folder";
 			}
-			var theme = Gtk.IconTheme.get_default ();
+			var theme = Gtk.IconTheme.get_for_display (get_display ());
 			if (path.has_suffix("Documents") && theme.has_icon ("folder-documents")) {
 				return "folder-documents";
 			} else if (path.has_suffix("Downloads") && theme.has_icon ("folder-downloads")) {

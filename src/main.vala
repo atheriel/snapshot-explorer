@@ -13,7 +13,7 @@ int main (string[] args) {
 	app.activate.connect (() => {
 		var win = app.active_window;
 		win = new Window (app);
-		win.show_all ();
+		win.show ();
 		win.present ();
 	});
 
