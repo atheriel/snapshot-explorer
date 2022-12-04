@@ -45,6 +45,9 @@ namespace SnapshotExplorer {
 
 			back = new Gtk.Button.from_icon_name ("go-previous-symbolic") {
 				tooltip_text = _("Back to folders"),
+				// This should be invisible on startup, when no folder can be
+				// selected.
+				visible = false,
 			};
 			back.clicked.connect(on_back);
 			titlebar.pack_start(back);
