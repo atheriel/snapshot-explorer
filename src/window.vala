@@ -71,31 +71,15 @@ namespace SnapshotExplorer {
 			menu_button.add (new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.BUTTON));
 			titlebar.pack_end(menu_button);
 
-			var sidebar_container = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
-			sidebar_container.set_size_request (200, -1);
-			sidebar_container.pack_start (new Gtk.Label (_("Folders")) {
-				justify = Gtk.Justification.LEFT,
-				xalign = 0,
-				margin_bottom = 6,
-				margin_left = 6,
-				margin_top = 6
-			}, false, false, 0);
 			folders = new Gtk.ListBox () {
-				selection_mode = Gtk.SelectionMode.NONE
+				selection_mode = Gtk.SelectionMode.NONE,
+				vexpand = true,
 			};
 			folders.set_placeholder (new Hdy.StatusPage () {
 				description = _("No mounted ZFS filesystems found."),
 				icon_name = "drive-multidisk-symbolic",
 				visible = true,
 			});
-			folders.row_selected.connect((row) => {
-				print("row selected\n");
-			});
-			var folders_container = new Gtk.ScrolledWindow (null, null) {
-				hscrollbar_policy = Gtk.PolicyType.NEVER
-			};
-			folders_container.add (folders);
-			sidebar_container.pack_start (folders_container, true, true, 0);
 
 			var snapshots_clamp = new Hdy.Clamp () {
 				maximum_size = 500,
@@ -113,6 +97,13 @@ namespace SnapshotExplorer {
 				icon_name = "folder-symbolic",
 				vexpand = true,
 			});
+
+			var sidebar_container = new Gtk.ScrolledWindow (null, null) {
+				width_request = 200,
+				hscrollbar_policy = Gtk.PolicyType.NEVER,
+				hexpand = true,
+			};
+			sidebar_container.add (folders);
 
 			var pane_container = new Gtk.ScrolledWindow (null, null) {
 				hscrollbar_policy = Gtk.PolicyType.NEVER
@@ -146,6 +137,18 @@ namespace SnapshotExplorer {
 				folders.remove (child);
 			});
 			if (zroot != null) {
+				var header = new Gtk.ListBoxRow () {
+					selectable = false,
+					activatable = false,
+				};
+				header.add (new Gtk.Label (_("Folders")) {
+					justify = Gtk.Justification.LEFT,
+					xalign = 0,
+					margin_bottom = 6,
+					margin_left = 6,
+					margin_top = 6
+				});
+				folders.add (header);
 				((!) zroot).children_foreach(TraverseFlags.ALL, (n) => {
 					folders.add (build_row_for_node (n, _("ZFS Dataset")));
 				});
