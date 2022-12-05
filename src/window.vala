@@ -75,6 +75,7 @@ namespace SnapshotExplorer {
 				selection_mode = Gtk.SelectionMode.NONE,
 				vexpand = true,
 			};
+			folders.get_style_context ().add_class ("sidebar");
 			folders.set_placeholder (new Hdy.StatusPage () {
 				description = _("No mounted ZFS filesystems found."),
 				icon_name = "drive-multidisk-symbolic",
@@ -84,8 +85,7 @@ namespace SnapshotExplorer {
 			var snapshots_clamp = new Hdy.Clamp () {
 				maximum_size = 500,
 				tightening_threshold = 400,
-				margin_top = 32,
-				margin_bottom = 32,
+				margin_top = 14,
 				margin_start = 12,
 				margin_end = 12
 			};
@@ -141,13 +141,14 @@ namespace SnapshotExplorer {
 					selectable = false,
 					activatable = false,
 				};
-				header.add (new Gtk.Label (_("Folders")) {
-					justify = Gtk.Justification.LEFT,
+				var header_label = new Gtk.Label (_("Folders")) {
 					xalign = 0,
 					margin_bottom = 6,
-					margin_left = 6,
-					margin_top = 6
-				});
+					margin_start = 6,
+					margin_top = 14,
+				};
+				header_label.get_style_context ().add_class ("heading");
+				header.add (header_label);
 				folders.add (header);
 				((!) zroot).children_foreach(TraverseFlags.ALL, (n) => {
 					folders.add (build_row_for_node (n, _("ZFS Dataset")));
@@ -312,15 +313,16 @@ namespace SnapshotExplorer {
 
 		void maybe_add_snapshot_rows (List<Hdy.ActionRow>? rows, string title) {
 			if (rows != null) {
-				snapshots.pack_start (new Gtk.Label (title) {
-				justify = Gtk.Justification.LEFT,
+				var header = new Gtk.Label (title) {
 					xalign = 0,
-					margin_left = 6
-				}, false, false, 0);
+				};
+				header.get_style_context ().add_class ("heading");
+				snapshots.pack_start (header, false, false, 0);
 				var list = new Gtk.ListBox () {
 					selection_mode = Gtk.SelectionMode.NONE,
 					margin_bottom = 24
 				};
+				list.get_style_context ().add_class ("content");
 				snapshots.pack_start (list, false, false, 0);
 				((!) rows).@foreach ((row) => {
 					list.add (row);
