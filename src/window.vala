@@ -81,6 +81,10 @@ namespace SnapshotExplorer {
 				icon_name = "drive-multidisk-symbolic",
 				visible = true,
 			});
+			folders.row_activated.connect((row) => {
+				var folder = FolderItem.from_row (row);
+				open_snapshots_for_path (folder.path);
+			});
 
 			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 			snapshots.append (new Adw.StatusPage () {
@@ -137,25 +141,12 @@ namespace SnapshotExplorer {
 
 		private async void refresh_folders () {
 			var zroot = yield Zfs.mountpoint_tree ();
-			Gtk.Widget? child = folders.get_first_child ();
-			while (child != null) {
-				folders.remove ((!) child);
-				child = folders.get_first_child ();
-			}
-			if (zroot != null) {
-				var header = new Gtk.ListBoxRow () {
-					selectable = false,
-					activatable = false,
-					child = new Gtk.Label (_("Folders")) {
-						xalign = 0,
-						css_classes = {"heading"},
-					},
-				};
-				folders.append (header);
-				((!) zroot).children_foreach(TraverseFlags.ALL, (n) => {
-					folders.append (build_row_for_node (n, _("ZFS Dataset")));
-				});
-			}
+			var store = new GLib.ListStore (typeof(FolderItem));
+			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"));
+			folders.bind_model (
+				new Gtk.TreeListModel (store, false, false, FolderItem.child_models),
+				FolderItem.create_row_widget
+			);
 		}
 
 		private async void start_bus () {
@@ -274,41 +265,6 @@ namespace SnapshotExplorer {
 			refresh_snapshots.begin ();
 		}
 
-		// Recursively build (expander) rows for a mount tree.
-		Gtk.ListBoxRow build_row_for_node (GLib.Node<string> node, string flavour) {
-			var path = node.data.dup ();
-			// TODO: Or, use something more time-related?
-			var open = new Gtk.Button.from_icon_name ("camera-photo-symbolic") {
-				margin_top = 6,
-				margin_bottom = 6
-			};
-			open.get_style_context ().add_class ("list-button");
-			open.clicked.connect(() => {
-				open_snapshots_for_path (path);
-			});
-			if (node.n_children () == 0) {
-				var row = new Adw.ActionRow () {
-					title = node.data,
-					subtitle = flavour,
-					icon_name = icon_name_for_path (node.data),
-					activatable_widget = open
-				};
-				row.add_suffix (open);
-				return (owned) row;
-			}
-			var row = new Adw.ExpanderRow () {
-				title = node.data,
-				subtitle = flavour,
-				expanded = false,
-				icon_name = icon_name_for_path (node.data)
-			};
-			node.children_foreach(TraverseFlags.ALL, (child_node) => {
-				var child_row = build_row_for_node (child_node, flavour);
-				row.add_row (child_row);
-			});
-			return (owned) row;
-		}
-
 		void maybe_add_snapshot_rows (List<Adw.ActionRow>? rows, string title) {
 			if (rows != null) {
 				snapshots.append (new Gtk.Label (title) {
@@ -326,27 +282,84 @@ namespace SnapshotExplorer {
 				});
 			}
 		}
+	}
 
-		private string icon_name_for_path (string path) {
-			if (!path.has_prefix ("/home")) {
-				return "folder";
+	public class FolderItem : GLib.Object {
+		public string label;
+		public string path;
+		public GLib.ListStore? children;
+		protected bool heading;
+
+		public static void maybe_add_section (GLib.ListStore store, Node<string>? root, string heading) {
+			assert (store.item_type == typeof(FolderItem));
+			if (root == null) {
+				return;
 			}
-			var theme = Gtk.IconTheme.get_for_display (get_display ());
-			if (path.has_suffix("Documents") && theme.has_icon ("folder-documents")) {
-				return "folder-documents";
-			} else if (path.has_suffix("Downloads") && theme.has_icon ("folder-downloads")) {
-				return "folder-downloads";
-			} else if (path.has_suffix("Music") && theme.has_icon ("folder-music")) {
-				return "folder-music";
-			} else if (path.has_suffix("Pictures") && theme.has_icon ("folder-pictures")) {
-				return "folder-pictures";
-			} else if (path.has_suffix("Videos") && theme.has_icon ("folder-videos")) {
-				return "folder-videos";
-			} else if (path.split("/").length == 3 && theme.has_icon ("folder-home")) {
-				// E.g. "/home/user".
-				return "folder-home";
+			store.append (new FolderItem.header (heading));
+			((!) root).children_foreach(TraverseFlags.ALL, (n) => {
+				store.append (new FolderItem.from_node (n));
+			});
+		}
+
+		public static GLib.ListStore? child_models (Object item) {
+			assert (item is FolderItem);
+			return ((FolderItem) item).children;
+		}
+
+		public static Gtk.Widget create_row_widget (GLib.Object item) {
+			assert (item is Gtk.TreeListRow);
+			assert (((Gtk.TreeListRow) item).item is unowned FolderItem);
+			var list_row = (Gtk.TreeListRow) item;
+			var folder = (FolderItem) list_row.item;
+			if (folder.heading) {
+				return new Gtk.ListBoxRow () {
+					selectable = false,
+					activatable = false,
+					child = new Gtk.Label (folder.label) {
+						xalign = 0,
+						css_classes = {"heading"},
+					},
+				};
 			}
-			return "folder";
+			var entry = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
+			entry.append (new Gtk.Image.from_icon_name ("folder-symbolic"));
+			entry.append (new Gtk.Label (folder.label) {
+				xalign = 0,
+				css_classes = {"title"},
+			});
+			return new Gtk.ListBoxRow () {
+				child = new Gtk.TreeExpander() {
+					list_row = list_row,
+					child = entry,
+				},
+			};
+		}
+
+		public static unowned FolderItem from_row (Gtk.ListBoxRow row) {
+			assert (row.child is Gtk.TreeExpander);
+			var item = ((Gtk.TreeExpander) (row.child)).item;
+			assert (item is unowned FolderItem);
+			return (FolderItem) item;
+		}
+
+		protected FolderItem.header (string heading) {
+			this.label = heading;
+			this.heading = true;
+		}
+
+		protected FolderItem.from_node (Node<string> item, string parent = "") {
+			this.label = item.data.replace(parent, "");
+			this.path = item.data;
+			this.heading = false;
+			if (item.n_children() == 0) {
+				return;
+			}
+			var model = new GLib.ListStore (typeof(FolderItem));
+			item.children_foreach(TraverseFlags.ALL, (n) => {
+				var p = this.path == "/" ? "/" : this.path + "/";
+				model.append (new FolderItem.from_node (n, p));
+			});
+			this.children = model;
 		}
 	}
 }
