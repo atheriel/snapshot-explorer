@@ -116,7 +116,9 @@ namespace SnapshotExplorer {
 			};
 
 			content = new Adw.Leaflet () {
-				transition_type = Adw.LeafletTransitionType.SLIDE
+				transition_type = Adw.LeafletTransitionType.SLIDE,
+				// Only unfold when folders are available.
+				can_unfold = false,
 			};
 			var page = content.append (sidebar_container);
 			page.name = "sidebar";
@@ -141,6 +143,9 @@ namespace SnapshotExplorer {
 
 		private async void refresh_folders () {
 			var zroot = yield Zfs.mountpoint_tree ();
+			if (zroot != null) {
+				content.can_unfold = true;
+			}
 			var store = new GLib.ListStore (typeof(FolderItem));
 			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"));
 			folders.bind_model (
