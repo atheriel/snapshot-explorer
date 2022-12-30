@@ -11,6 +11,7 @@ namespace SnapshotExplorer {
 		Gtk.Box snapshots;
 		Adw.Leaflet content;
 		string? current_path;
+		Fs.Type current_fs_type = Fs.Type.NONE;
 		FileManager1? fm = null;
 
 		const ActionEntry[] ACTION_ENTRIES = {
@@ -83,7 +84,10 @@ namespace SnapshotExplorer {
 			});
 			folders.row_activated.connect((row) => {
 				var folder = FolderItem.from_row (row);
-				open_snapshots_for_path (folder.path);
+				content.visible_child_name = "pane";
+				current_path = folder.path.dup ();
+				current_fs_type = folder.type;
+				refresh_snapshots.begin ();
 			});
 
 			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
@@ -147,7 +151,8 @@ namespace SnapshotExplorer {
 				content.can_unfold = true;
 			}
 			var store = new GLib.ListStore (typeof(FolderItem));
-			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"));
+			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"),
+										  Fs.Type.ZFS);
 			folders.bind_model (
 				new Gtk.TreeListModel (store, false, false, FolderItem.child_models),
 				FolderItem.create_row_widget
@@ -173,10 +178,15 @@ namespace SnapshotExplorer {
 		}
 
 		private async void refresh_snapshots () {
-			if (current_path == null) {
+			if (current_path == null || current_fs_type == Fs.Type.NONE) {
 				return;
 			}
-			var entries = yield Zfs.snapshots_for_path ((!) current_path);
+			List<Fs.Snapshot> entries;
+			if (current_fs_type == Fs.Type.ZFS) {
+				entries = yield Zfs.snapshots_for_path ((!) current_path);
+			} else {
+				return;
+			}
 			Gtk.Widget? child = snapshots.get_first_child ();
 			while (child != null) {
 				snapshots.remove ((!) child);
@@ -195,9 +205,9 @@ namespace SnapshotExplorer {
 			var this_year = new List<Adw.ActionRow> ();
 			var older = new List<Adw.ActionRow> ();
 			entries.@foreach ((e) => {
-				Zfs.Snapshot entry = (!) e;
+				Fs.Snapshot entry = (!) e;
 				var row = new Adw.ActionRow () {
-					subtitle = _("ZFS Snapshot: %s").printf(entry.name)
+					subtitle = _("Snapshot: %s").printf(entry.name)
 				};
 				if (fm != null) {
 					var open = new Gtk.Button.from_icon_name ("folder") {
@@ -220,16 +230,16 @@ namespace SnapshotExplorer {
 				var ts = entry.timestamp ();
 				row.title = ts.display;
 				switch (ts.range) {
-				case Zfs.Snapshot.AgeRange.TODAY:
+				case Fs.Snapshot.AgeRange.TODAY:
 					today.append (row);
 					break;
-				case Zfs.Snapshot.AgeRange.YESTERDAY:
+				case Fs.Snapshot.AgeRange.YESTERDAY:
 					yesterday.append (row);
 					break;
-				case Zfs.Snapshot.AgeRange.THIS_WEEK:
+				case Fs.Snapshot.AgeRange.THIS_WEEK:
 					this_week.append (row);
 					break;
-				case Zfs.Snapshot.AgeRange.THIS_YEAR:
+				case Fs.Snapshot.AgeRange.THIS_YEAR:
 					this_year.append (row);
 					break;
 				default:
@@ -264,12 +274,6 @@ namespace SnapshotExplorer {
 			win.present ();
 		}
 
-		private void open_snapshots_for_path (string path) {
-			content.visible_child_name = "pane";
-			current_path = path.dup ();
-			refresh_snapshots.begin ();
-		}
-
 		void maybe_add_snapshot_rows (List<Adw.ActionRow>? rows, string title) {
 			if (rows != null) {
 				snapshots.append (new Gtk.Label (title) {
@@ -292,17 +296,18 @@ namespace SnapshotExplorer {
 	public class FolderItem : GLib.Object {
 		public string label;
 		public string path;
+		public Fs.Type type;
 		public GLib.ListStore? children;
 		protected bool heading;
 
-		public static void maybe_add_section (GLib.ListStore store, Node<string>? root, string heading) {
+		public static void maybe_add_section (GLib.ListStore store, Node<string>? root, string heading, Fs.Type t) {
 			assert (store.item_type == typeof(FolderItem));
 			if (root == null) {
 				return;
 			}
 			store.append (new FolderItem.header (heading));
 			((!) root).children_foreach(TraverseFlags.ALL, (n) => {
-				store.append (new FolderItem.from_node (n));
+				store.append (new FolderItem.from_node (n, t));
 			});
 		}
 
@@ -349,12 +354,14 @@ namespace SnapshotExplorer {
 
 		protected FolderItem.header (string heading) {
 			this.label = heading;
+			this.type = Fs.Type.NONE;
 			this.heading = true;
 		}
 
-		protected FolderItem.from_node (Node<string> item, string parent = "") {
+		protected FolderItem.from_node (Node<string> item, Fs.Type t, string parent = "") {
 			this.label = item.data.replace(parent, "");
 			this.path = item.data;
+			this.type = t;
 			this.heading = false;
 			if (item.n_children() == 0) {
 				return;
@@ -362,7 +369,7 @@ namespace SnapshotExplorer {
 			var model = new GLib.ListStore (typeof(FolderItem));
 			item.children_foreach(TraverseFlags.ALL, (n) => {
 				var p = this.path == "/" ? "/" : this.path + "/";
-				model.append (new FolderItem.from_node (n, p));
+				model.append (new FolderItem.from_node (n, t, p));
 			});
 			this.children = model;
 		}

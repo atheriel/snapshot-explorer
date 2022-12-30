@@ -1,5 +1,6 @@
 snapshot_explorer_sources = [
   'dbus.vala',
+  'fs.vala',
   'main.vala',
   'shortcuts.vala',
   'window.vala',
