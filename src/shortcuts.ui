@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+    <template class="SnapshotExplorerShortcutsWindow" parent="GtkShortcutsWindow">
+      <property name="modal">1</property>
+      <child>
+        <object class="GtkShortcutsSection">
+          <property name="visible">1</property>
+          <property name="section-name">editor</property>
+          <property name="title">All</property>
+          <child>
+            <object class="GtkShortcutsGroup">
+              <property name="visible">1</property>
+              <property name="title">General</property>
+              <child>
+                <object class="GtkShortcutsShortcut">
+                  <property name="visible">1</property>
+                  <property name="title">Reload folders and snapshots</property>
+                  <property name="accelerator">F5</property>
+                </object>
+              </child>
+              <child>
+                <object class="GtkShortcutsShortcut">
+                  <property name="visible">1</property>
+                  <property name="title">Keyboard shortcuts</property>
+                  <property name="accelerator">&lt;primary&gt;question</property>
+                </object>
+              </child>
+              <child>
+                <object class="GtkShortcutsShortcut">
+                  <property name="visible">1</property>
+                  <property name="title">Quit</property>
+                  <property name="accelerator">&lt;ctrl&gt;q</property>
+                </object>
+              </child>
+            </object>
+          </child>
+        </object>
+      </child>
+    </template>
+</interface>
+

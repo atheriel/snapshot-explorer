@@ -5,7 +5,7 @@
 -->
 
 <gresources>
-  <gresource prefix="/org/github/atheriel/snapshot-explorer">
-    <file>window.ui</file>
+  <gresource prefix="/com/github/atheriel/snapshot-explorer">
+    <file>shortcuts.ui</file>
   </gresource>
 </gresources>

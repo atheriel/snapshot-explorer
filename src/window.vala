@@ -13,6 +13,11 @@ namespace SnapshotExplorer {
 		string? current_path;
 		FileManager1? fm = null;
 
+		const ActionEntry[] ACTION_ENTRIES = {
+			{ "refresh", on_refresh },
+			{ "shortcuts", on_shortcuts },
+		};
+
 		public Window (Gtk.Application app) {
 			Object (
 				application: app,
@@ -27,99 +32,78 @@ namespace SnapshotExplorer {
 		}
 
 		construct {
+			add_action_entries (ACTION_ENTRIES, this);
+
+			var app = (Gtk.Application) GLib.Application.get_default ();
+			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
+			app.set_accels_for_action ("win.shortcuts", {"<Control>question"});
+
 			var titlebar = new Gtk.HeaderBar () {
 				title = _("Snapshot Explorer"),
 				show_close_button = true
 			};
 			set_titlebar (titlebar);
 
-			back = new Gtk.Button.from_icon_name ("go-previous-symbolic");
+			back = new Gtk.Button.from_icon_name ("go-previous-symbolic") {
+				tooltip_text = _("Back to folders"),
+			};
 			back.clicked.connect(on_back);
 			titlebar.pack_start(back);
 
 			var refresh = new Gtk.Button.from_icon_name ("view-refresh-symbolic") {
-				tooltip_text = _("Refresh the folder list.")
+				tooltip_text = _("Refresh folder list"),
+				action_name = "win.refresh"
 			};
-			refresh.clicked.connect(on_refresh);
 			titlebar.pack_start(refresh);
 
-			// var menu = new Menu();
-			// menu.append("Keyboard Shortcuts", "app.shortcuts");
-			// menu.append("About System Information", "app.about");
-			// var menu_button = new Gtk.MenuButton() {
-			//	   use_popover = true,
-			//	   menu_model = menu,
-			// };
-			// menu_button.add (new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.BUTTON));
-			// titlebar.pack_end(menu_button);
+			var menu = new Menu ();
+			var item = new MenuItem (_("Keyboard Shortcuts"), "win.shortcuts");
+			item.set_attribute ("accel", "s", "<Control>question");
+			menu.append_item (item);
+			item = new MenuItem (_("Quit"), "app.quit");
+			item.set_attribute ("accel", "s", "<Control>q");
+			menu.append_item (item);
+			var menu_button = new Gtk.MenuButton() {
+				tooltip_text = _("Menu"),
+				use_popover = true,
+				menu_model = menu,
+			};
+			menu_button.add (new Gtk.Image.from_icon_name ("open-menu-symbolic", Gtk.IconSize.BUTTON));
+			titlebar.pack_end(menu_button);
 
-			var sidebar_container = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
-			sidebar_container.set_size_request (200, -1);
-			sidebar_container.pack_start (new Gtk.Label (_("Folders")) {
-				justify = Gtk.Justification.LEFT,
-				xalign = 0,
-				margin_bottom = 6,
-				margin_left = 6,
-				margin_top = 6
-			}, false, false, 0);
 			folders = new Gtk.ListBox () {
-				selection_mode = Gtk.SelectionMode.NONE
+				selection_mode = Gtk.SelectionMode.NONE,
+				vexpand = true,
 			};
-			folders.set_placeholder (new Hdy.ActionRow () {
-				title = _("No snapshot-capable folders found.")
+			folders.get_style_context ().add_class ("sidebar");
+			folders.set_placeholder (new Hdy.StatusPage () {
+				description = _("No mounted ZFS filesystems found."),
+				icon_name = "drive-multidisk-symbolic",
+				visible = true,
 			});
-			folders.row_selected.connect((row) => {
-				print("row selected\n");
-			});
-			var folders_container = new Gtk.ScrolledWindow (null, null) {
-				hscrollbar_policy = Gtk.PolicyType.NEVER
-			};
-			folders_container.add (folders);
-			sidebar_container.pack_start (folders_container, true, true, 0);
-			var help_container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
-			help_container.get_style_context ().add_class ("background");
-			sidebar_container.pack_start (help_container, false, false, 0);
-
-			var help = new Gtk.Button.from_icon_name ("help-faq-symbolic", Gtk.IconSize.MENU) {
-				margin_left = 3,
-				// margin_top = 6,
-				margin_bottom = 6,
-				relief = Gtk.ReliefStyle.NONE
-			};
-			help_container.pack_start (help, false, true, 0);
-			var help_popover = new Gtk.Popover (help) {
-				constrain_to = Gtk.PopoverConstraint.WINDOW,
-				modal = true,
-				visible = false
-			};
-			help_popover.add (new Gtk.Label ("hello"));
-			help.clicked.connect(() => {
-				help_popover.popup ();
-				help_popover.show_all ();
-			});
-
-			help_container.pack_start (new Gtk.Label (null) {
-				label = _("Missing something?"),
-				justify = Gtk.Justification.LEFT,
-				xalign = 0,
-				margin_bottom = 6,
-				margin_top = 6
-			}, false, false, 0);
 
 			var snapshots_clamp = new Hdy.Clamp () {
 				maximum_size = 500,
 				tightening_threshold = 400,
-				margin_top = 32,
-				margin_bottom = 32,
+				margin_top = 14,
 				margin_start = 12,
 				margin_end = 12
 			};
 			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
 			snapshots_clamp.add (snapshots);
-			snapshots.pack_start (new Gtk.Label (null) {
-				label = _("Choose a folder to view snapshots, if any."),
-				hexpand = true
-			}, false, false, 0);
+			snapshots.pack_start (new Hdy.StatusPage () {
+				title = _("Select a Folder"),
+				description = _("Choose a folder from a mounted ZFS filesystem\nto view snapshots."),
+				icon_name = "folder-symbolic",
+				vexpand = true,
+			});
+
+			var sidebar_container = new Gtk.ScrolledWindow (null, null) {
+				width_request = 200,
+				hscrollbar_policy = Gtk.PolicyType.NEVER,
+				hexpand = true,
+			};
+			sidebar_container.add (folders);
 
 			var pane_container = new Gtk.ScrolledWindow (null, null) {
 				hscrollbar_policy = Gtk.PolicyType.NEVER
@@ -153,6 +137,19 @@ namespace SnapshotExplorer {
 				folders.remove (child);
 			});
 			if (zroot != null) {
+				var header = new Gtk.ListBoxRow () {
+					selectable = false,
+					activatable = false,
+				};
+				var header_label = new Gtk.Label (_("Folders")) {
+					xalign = 0,
+					margin_bottom = 6,
+					margin_start = 6,
+					margin_top = 14,
+				};
+				header_label.get_style_context ().add_class ("heading");
+				header.add (header_label);
+				folders.add (header);
 				((!) zroot).children_foreach(TraverseFlags.ALL, (n) => {
 					folders.add (build_row_for_node (n, _("ZFS Dataset")));
 				});
@@ -265,6 +262,13 @@ namespace SnapshotExplorer {
 			}
 		}
 
+		private void on_shortcuts () {
+			var win = new ShortcutsWindow ();
+			win.set_transient_for (this);
+			win.show_all ();
+			win.present ();
+		}
+
 		private void open_snapshots_for_path (string path) {
 			content.visible_child_name = "pane";
 			current_path = path.dup ();
@@ -309,15 +313,16 @@ namespace SnapshotExplorer {
 
 		void maybe_add_snapshot_rows (List<Hdy.ActionRow>? rows, string title) {
 			if (rows != null) {
-				snapshots.pack_start (new Gtk.Label (title) {
-				justify = Gtk.Justification.LEFT,
+				var header = new Gtk.Label (title) {
 					xalign = 0,
-					margin_left = 6
-				}, false, false, 0);
+				};
+				header.get_style_context ().add_class ("heading");
+				snapshots.pack_start (header, false, false, 0);
 				var list = new Gtk.ListBox () {
 					selection_mode = Gtk.SelectionMode.NONE,
 					margin_bottom = 24
 				};
+				list.get_style_context ().add_class ("content");
 				snapshots.pack_start (list, false, false, 0);
 				((!) rows).@foreach ((row) => {
 					list.add (row);
