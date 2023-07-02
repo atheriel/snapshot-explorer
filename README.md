@@ -64,3 +64,13 @@ execute `snapshot-explorer`:
 
     sudo ninja install
     snapshot-explorer
+    
+### Flatpak Building and Installation
+
+Install a runtime and the matching SDK:
+
+    flatpak install org.gnome.Platform//41 org.gnome.Sdk//41
+    
+Build and install a Flatpak application (per-user installation):
+
+    flatpak-builder --user --install flatpak-build org.github.atheriel.snapshot-explorer.json
