@@ -14,8 +14,8 @@ extension_sources = [
 # suggested by Meson's docs at time of writing.
 
 extension_dep = dependency('libnautilus-extension', version: '>= 3.0.0')
-extension_dir = extension_dep.get_pkgconfig_variable('extensiondir')
-include_dir = extension_dep.get_pkgconfig_variable('includedir') + '/nautilus'
+extension_dir = extension_dep.get_variable(pkgconfig: 'extensiondir')
+include_dir = extension_dep.get_variable(pkgconfig: 'includedir') + '/nautilus'
 
 extension_deps = [
   dependency('gtk+-3.0', version: '>= 3.22'),
