@@ -193,9 +193,11 @@ namespace SnapshotExplorer {
 				child = snapshots.get_first_child ();
 			}
 			if (entries.length () == 0) {
-				snapshots.append (new Gtk.Label (null) {
-					label = _("No snapshots found."),
-					hexpand = true
+				snapshots.append (new Adw.StatusPage () {
+					title = _("No Snapshots"),
+					description = _("This ZFS dataset has no snapshots to explore."),
+					icon_name = "preferences-system-time-symbolic",
+					vexpand = true,
 				});
 				return;
 			}
