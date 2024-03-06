@@ -23,7 +23,7 @@ class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 		cancellable = new Cancellable ();
 	}
 
-	public virtual Gtk.Widget? get_widget (string uri, Gtk.Widget window) {
+	public unowned Gtk.Widget? get_widget (string uri, Gtk.Widget window) {
 		if (!uri.contains ("file://") || !is_snapshot_path (uri)) {
 			return null;
 		}

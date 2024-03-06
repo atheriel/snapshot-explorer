@@ -6,7 +6,9 @@ project('snapshot-explorer', ['c', 'vala'],
   ],
 )
 
-add_project_arguments('--enable-experimental-non-null', language: 'vala')
+vapi_dir = meson.current_source_dir() / 'vapi'
+add_project_arguments(['--vapidir', vapi_dir, '--enable-experimental-non-null'],
+                      language: 'vala')
 
 if get_option('flatpak')
   add_project_arguments('-D', 'FLATPAK', language: 'vala')
