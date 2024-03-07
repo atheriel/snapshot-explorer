@@ -73,7 +73,7 @@ namespace SnapshotExplorer {
 			});
 
 			folders = new Gtk.ListBox () {
-				selection_mode = Gtk.SelectionMode.NONE,
+				selection_mode = Gtk.SelectionMode.SINGLE,
 				vexpand = true,
 				css_classes = {"navigation-sidebar"},
 			};
