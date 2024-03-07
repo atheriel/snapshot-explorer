@@ -102,6 +102,7 @@ namespace SnapshotExplorer {
 				width_request = 200,
 				hscrollbar_policy = Gtk.PolicyType.NEVER,
 				hexpand = true,
+				margin_top = 6,
 				child = folders,
 			};
 
@@ -278,18 +279,13 @@ namespace SnapshotExplorer {
 
 		void maybe_add_snapshot_rows (List<Adw.ActionRow>? rows, string title) {
 			if (rows != null) {
-				snapshots.append (new Gtk.Label (title) {
-					xalign = 0,
-					css_classes = {"heading"},
-				});
-				var list = new Gtk.ListBox () {
-					selection_mode = Gtk.SelectionMode.NONE,
+				var group = new Adw.PreferencesGroup () {
+					title = title,
 					margin_bottom = 24,
-					css_classes = {"boxed-list"},
 				};
-				snapshots.append (list);
+				snapshots.append (group);
 				((!) rows).@foreach ((row) => {
-					list.append (row);
+					group.add (row);
 				});
 			}
 		}
