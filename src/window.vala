@@ -210,12 +210,12 @@ namespace SnapshotExplorer {
 			entries.@foreach ((e) => {
 				Fs.Snapshot entry = (!) e;
 				var row = new Adw.ActionRow () {
-					subtitle = _("Snapshot: %s").printf(entry.name)
+					subtitle = entry.name,
+					css_classes = {"numeric", "property"},
 				};
 				if (fm != null) {
-					var open = new Gtk.Button.from_icon_name ("folder") {
-						label = _("Browse"),
-						always_show_image = true,
+					var open = new Gtk.Button.from_icon_name ("folder-symbolic") {
+						tooltip_text = _("Browse in file manager"),
 						margin_top = 6,
 						margin_bottom = 6
 					};
