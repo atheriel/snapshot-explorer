@@ -271,9 +271,10 @@ namespace SnapshotExplorer {
 		}
 
 		private void on_shortcuts () {
-			var win = new ShortcutsWindow ();
-			win.set_transient_for (this);
-			win.show_all ();
+			var win = (Gtk.Window) new Gtk.Builder.from_resource (
+				"/com/github/atheriel/snapshot-explorer/shortcuts.ui")
+				.get_object ("shortcuts");
+			win.transient_for = this;
 			win.present ();
 		}
 
