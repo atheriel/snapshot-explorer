@@ -5,11 +5,11 @@
  */
 
 namespace SnapshotExplorer {
-	public class Window : Gtk.ApplicationWindow {
+	public class Window : Adw.ApplicationWindow {
 		Gtk.Button back;
 		Gtk.ListBox folders;
 		Gtk.Box snapshots;
-		Adw.Leaflet content;
+		Adw.Leaflet view;
 		string? current_path;
 		Fs.Type current_fs_type = Fs.Type.NONE;
 		FileManager1? fm = null;
@@ -39,10 +39,7 @@ namespace SnapshotExplorer {
 			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
 			app.set_accels_for_action ("win.shortcuts", {"<Control>question"});
 
-			var titlebar = new Gtk.HeaderBar () {
-				show_title_buttons = true
-			};
-			set_titlebar (titlebar);
+			var titlebar = new Adw.HeaderBar ();
 
 			back = new Gtk.Button.from_icon_name ("go-previous-symbolic") {
 				tooltip_text = _("Back to folders"),
@@ -84,7 +81,7 @@ namespace SnapshotExplorer {
 			});
 			folders.row_activated.connect((row) => {
 				var folder = FolderItem.from_row (row);
-				content.visible_child_name = "pane";
+				view.visible_child_name = "pane";
 				current_path = folder.path.dup ();
 				current_fs_type = folder.type;
 				refresh_snapshots.begin ();
@@ -120,27 +117,31 @@ namespace SnapshotExplorer {
 				},
 			};
 
-			content = new Adw.Leaflet () {
+			view = new Adw.Leaflet () {
 				transition_type = Adw.LeafletTransitionType.SLIDE,
 				// Only unfold when folders are available.
 				can_unfold = false,
 			};
-			var page = content.append (sidebar_container);
+			var page = view.append (sidebar_container);
 			page.name = "sidebar";
-			page = content.append (new Gtk.Separator (Gtk.Orientation.VERTICAL));
+			page = view.append (new Gtk.Separator (Gtk.Orientation.VERTICAL));
 			page.name = "separator";
 			page.navigatable = false;
-			page = content.append (pane_container);
+			page = view.append (pane_container);
 			page.name = "pane";
-			content.set_visible_child_name ("sidebar");
-			child = content;
+			view.set_visible_child_name ("sidebar");
 
-			content.notify["visible-child"].connect((s, p) => {
+			view.notify["visible-child"].connect((s, p) => {
 				update_titlebar ();
 			});
-			content.notify["folded"].connect((s, p) => {
+			view.notify["folded"].connect((s, p) => {
 				update_titlebar ();
 			});
+
+			var wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+			wrapper.append (titlebar);
+			wrapper.append (view);
+			content = wrapper;
 
 			refresh_folders.begin ();
 			start_bus.begin ();
@@ -149,7 +150,7 @@ namespace SnapshotExplorer {
 		private async void refresh_folders () {
 			var zroot = yield Zfs.mountpoint_tree ();
 			if (zroot != null) {
-				content.can_unfold = true;
+				view.can_unfold = true;
 			}
 			var store = new GLib.ListStore (typeof(FolderItem));
 			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"),
@@ -173,8 +174,8 @@ namespace SnapshotExplorer {
 		}
 
 		private void update_titlebar () {
-			var viewing_sidebar = content.visible_child_name == "sidebar";
-			var folded = content.folded;
+			var viewing_sidebar = view.visible_child_name == "sidebar";
+			var folded = view.folded;
 			back.set_visible (folded && !viewing_sidebar);
 		}
 
@@ -259,11 +260,11 @@ namespace SnapshotExplorer {
 		}
 
 		private void on_back () {
-			content.visible_child_name = "sidebar";
+			view.visible_child_name = "sidebar";
 		}
 
 		private void on_refresh () {
-			if (content.visible_child_name == "sidebar") {
+			if (view.visible_child_name == "sidebar") {
 				refresh_folders.begin ();
 			} else {
 				refresh_snapshots.begin ();
