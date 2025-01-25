@@ -15,6 +15,7 @@ namespace Fs {
 		public string name;
 		public string path;
 		public DateTime created;
+		private Timestamp? _timestamp = null;
 
 		public Snapshot (string name, string path, DateTime created) {
 			this.name = name;
@@ -36,6 +37,9 @@ namespace Fs {
 		}
 
 		public Timestamp timestamp () {
+			if (_timestamp != null) {
+				return (!) _timestamp;
+			}
 			var now = new DateTime.now_local ();
 			var hours_today = now.get_hour ();
 			var since = now.difference (created);
@@ -58,10 +62,11 @@ namespace Fs {
 				day = created.format ("%Y-%m-%d");
 				range = AgeRange.PREVIOUS_YEARS;
 			}
-			return {
+			_timestamp = {
 				_("%s at %s").printf (day, timestamp),
 				range,
 			};
+			return (!) _timestamp;
 		}
 	}
 }

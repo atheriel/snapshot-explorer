@@ -210,17 +210,9 @@ namespace SnapshotExplorer {
 			var older = new List<Adw.ActionRow> ();
 			entries.@foreach ((e) => {
 				Fs.Snapshot entry = (!) e;
-				var row = new Adw.ActionRow () {
-					subtitle = entry.name,
-					css_classes = {"numeric", "property"},
-				};
+				var row = new SnapshotRow (entry);
 				if (fm != null) {
-					var open = new Gtk.Button.from_icon_name ("folder-symbolic") {
-						tooltip_text = _("Browse in file manager"),
-						margin_top = 6,
-						margin_bottom = 6
-					};
-					open.clicked.connect(() => {
+					row.browse.clicked.connect(() => {
 						try {
 							((!) fm).show_folders({ entry.path }, "");
 						} catch (Error e) {
@@ -228,12 +220,8 @@ namespace SnapshotExplorer {
 							print ("failed to connect to dbus: %s", e.message);
 						};
 					});
-					row.activatable_widget = open;
-					row.add_suffix (open);
 				}
-				var ts = entry.timestamp ();
-				row.title = ts.display;
-				switch (ts.range) {
+				switch (entry.timestamp ().range) {
 				case Fs.Snapshot.AgeRange.TODAY:
 					today.append (row);
 					break;
