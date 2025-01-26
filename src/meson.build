@@ -23,6 +23,16 @@ snapshot_explorer_sources += gnome.compile_resources(
 executable(
   'snapshot-explorer', snapshot_explorer_sources,
   vala_args: '--target-glib=2.50',
+  c_args: [
+    # Artifacts of Vala's code generation.
+    '-Wno-unused-but-set-variable',
+    '-Wno-unused-function',
+    '-Wno-unused-parameter',
+    '-Wno-unused-variable',
+    # See: https://gitlab.gnome.org/GNOME/vala/-/issues/1413
+    '-Wno-incompatible-function-pointer-types',
+    '-Wno-cast-function-type-mismatch',
+  ],
   dependencies: snapshot_explorer_deps,
   install: true,
 )
