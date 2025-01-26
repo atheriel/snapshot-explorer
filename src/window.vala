@@ -8,11 +8,10 @@ namespace SnapshotExplorer {
 	public class Window : Adw.ApplicationWindow {
 		Gtk.Button back;
 		Gtk.ListBox folders;
-		Gtk.Box snapshots;
+		SnapshotPane snapshots;
 		Adw.Leaflet view;
 		string? current_path;
 		Fs.Type current_fs_type = Fs.Type.NONE;
-		FileManager1? fm = null;
 
 		const ActionEntry[] ACTION_ENTRIES = {
 			{ "refresh", on_refresh },
@@ -84,16 +83,12 @@ namespace SnapshotExplorer {
 				view.visible_child_name = "pane";
 				current_path = folder.path.dup ();
 				current_fs_type = folder.type;
-				refresh_snapshots.begin ();
+				snapshots.set_path.begin (current_path, current_fs_type);
 			});
 
-			snapshots = new Gtk.Box (Gtk.Orientation.VERTICAL, 6);
-			snapshots.append (new Adw.StatusPage () {
-				title = _("Select a Folder"),
-				description = _("Choose a folder from a mounted ZFS filesystem\nto view snapshots."),
-				icon_name = "folder-symbolic",
-				vexpand = true,
-			});
+			snapshots = new SnapshotPane () {
+				width_request = 500,
+			};
 
 			var sidebar_container = new Gtk.ScrolledWindow () {
 				width_request = 200,
@@ -101,20 +96,6 @@ namespace SnapshotExplorer {
 				hexpand = true,
 				margin_top = 6,
 				child = folders,
-			};
-
-			var pane_container = new Gtk.ScrolledWindow () {
-				hscrollbar_policy = Gtk.PolicyType.NEVER,
-				width_request = 500,
-				hexpand = true,
-				child = new Adw.Clamp () {
-					maximum_size = 500,
-					tightening_threshold = 400,
-					margin_top = 14,
-					margin_start = 12,
-					margin_end = 12,
-					child = snapshots,
-				},
 			};
 
 			view = new Adw.Leaflet () {
@@ -127,7 +108,7 @@ namespace SnapshotExplorer {
 			page = view.append (new Gtk.Separator (Gtk.Orientation.VERTICAL));
 			page.name = "separator";
 			page.navigatable = false;
-			page = view.append (pane_container);
+			page = view.append (snapshots);
 			page.name = "pane";
 			view.set_visible_child_name ("sidebar");
 
@@ -144,7 +125,6 @@ namespace SnapshotExplorer {
 			content = wrapper;
 
 			refresh_folders.begin ();
-			start_bus.begin ();
 		}
 
 		private async void refresh_folders () {
@@ -161,90 +141,10 @@ namespace SnapshotExplorer {
 			);
 		}
 
-		private async void start_bus () {
-			try {
-				fm = Bus.get_proxy_sync (
-					BusType.SESSION,
-					"org.freedesktop.FileManager1",
-					"/org/freedesktop/FileManager1"
-				);
-			} catch (IOError e) {
-				print ("failed to connect to dbus: %s", e.message);
-			}
-		}
-
 		private void update_titlebar () {
 			var viewing_sidebar = view.visible_child_name == "sidebar";
 			var folded = view.folded;
 			back.set_visible (folded && !viewing_sidebar);
-		}
-
-		private async void refresh_snapshots () {
-			if (current_path == null || current_fs_type == Fs.Type.NONE) {
-				return;
-			}
-			List<Fs.Snapshot> entries;
-			if (current_fs_type == Fs.Type.ZFS) {
-				entries = yield Zfs.snapshots_for_path ((!) current_path);
-			} else {
-				return;
-			}
-			Gtk.Widget? child = snapshots.get_first_child ();
-			while (child != null) {
-				snapshots.remove ((!) child);
-				child = snapshots.get_first_child ();
-			}
-			if (entries.length () == 0) {
-				snapshots.append (new Adw.StatusPage () {
-					title = _("No Snapshots"),
-					description = _("This ZFS dataset has no snapshots to explore."),
-					icon_name = "preferences-system-time-symbolic",
-					vexpand = true,
-				});
-				return;
-			}
-			var today = new List<Adw.ActionRow> ();
-			var yesterday = new List<Adw.ActionRow> ();
-			var this_week = new List<Adw.ActionRow> ();
-			var this_year = new List<Adw.ActionRow> ();
-			var older = new List<Adw.ActionRow> ();
-			entries.@foreach ((e) => {
-				Fs.Snapshot entry = (!) e;
-				var row = new SnapshotRow (entry);
-				if (fm != null) {
-					row.browse.clicked.connect(() => {
-						try {
-							((!) fm).show_folders({ entry.path }, "");
-						} catch (Error e) {
-						// TODO: Better error handling/reporting.
-							print ("failed to connect to dbus: %s", e.message);
-						};
-					});
-				}
-				switch (entry.timestamp ().range) {
-				case Fs.Snapshot.AgeRange.TODAY:
-					today.append (row);
-					break;
-				case Fs.Snapshot.AgeRange.YESTERDAY:
-					yesterday.append (row);
-					break;
-				case Fs.Snapshot.AgeRange.THIS_WEEK:
-					this_week.append (row);
-					break;
-				case Fs.Snapshot.AgeRange.THIS_YEAR:
-					this_year.append (row);
-					break;
-				default:
-					older.append (row);
-					break;
-				}
-			});
-
-			maybe_add_snapshot_rows (today, _("Today"));
-			maybe_add_snapshot_rows (yesterday, _("Yesterday"));
-			maybe_add_snapshot_rows (this_week, _("Earlier This Week"));
-			maybe_add_snapshot_rows (this_year, _("Earlier This Year"));
-			maybe_add_snapshot_rows (older, _("Previous Years"));
 		}
 
 		private void on_back () {
@@ -255,7 +155,7 @@ namespace SnapshotExplorer {
 			if (view.visible_child_name == "sidebar") {
 				refresh_folders.begin ();
 			} else {
-				refresh_snapshots.begin ();
+				snapshots.set_path.begin (current_path, current_fs_type);
 			}
 		}
 
@@ -265,19 +165,6 @@ namespace SnapshotExplorer {
 				.get_object ("shortcuts");
 			win.transient_for = this;
 			win.present ();
-		}
-
-		void maybe_add_snapshot_rows (List<Adw.ActionRow>? rows, string title) {
-			if (rows != null) {
-				var group = new Adw.PreferencesGroup () {
-					title = title,
-					margin_bottom = 24,
-				};
-				snapshots.append (group);
-				((!) rows).@foreach ((row) => {
-					group.add (row);
-				});
-			}
 		}
 	}
 

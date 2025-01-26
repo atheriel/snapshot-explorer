@@ -2,6 +2,7 @@ snapshot_explorer_sources = [
   'dbus.vala',
   'fs.vala',
   'main.vala',
+  'snapshot-pane.vala',
   'snapshot-row.vala',
   'window.vala',
   'zfs.vala',
