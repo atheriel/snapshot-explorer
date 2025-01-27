@@ -2,6 +2,12 @@
 
 [GtkTemplate (ui = "/com/github/atheriel/snapshot-explorer/snapshot-pane.ui")]
 class SnapshotPane : Gtk.Box {
+#if ADW_HAS_SPINNER
+	public Adw.Spinner loading_indicator { get; construct set; }
+#else
+	public Gtk.Spinner loading_indicator { get; construct set; }
+#endif
+
 	[GtkChild] private unowned Gtk.Stack stack;
 	[GtkChild] private unowned Adw.PreferencesGroup today_section;
 	[GtkChild] private unowned Adw.PreferencesGroup yesterday_section;
@@ -16,6 +22,19 @@ class SnapshotPane : Gtk.Box {
 	private FileManager1? fm = null;
 
 	construct {
+#if ADW_HAS_SPINNER
+		loading_indicator = new Adw.Spinner () {
+			tooltip_text = _("Loading snapshots..."),
+			visible = false,
+		};
+#else
+		loading_indicator = new Gtk.Spinner () {
+			tooltip_text = _("Loading snapshots..."),
+			spinning = false,
+			visible = false,
+		};
+#endif
+
 		start_bus.begin ();
 	}
 
@@ -23,6 +42,11 @@ class SnapshotPane : Gtk.Box {
 		if (path == null || fs_type == Fs.Type.NONE) {
 			return;
 		}
+
+		loading_indicator.visible = true;
+#if !ADW_HAS_SPINNER
+		loading_indicator.spinning = true;
+#endif
 
 		List<Fs.Snapshot> entries;
 		if (fs_type == Fs.Type.ZFS) {
@@ -76,6 +100,10 @@ class SnapshotPane : Gtk.Box {
 		});
 
 		stack.visible_child_name = "snapshots";
+		loading_indicator.visible = false;
+#if !ADW_HAS_SPINNER
+		loading_indicator.spinning = false;
+#endif
 	}
 
 	private void clear_snapshots () {

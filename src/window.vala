@@ -14,6 +14,7 @@ namespace SnapshotExplorer {
 		[GtkChild] unowned Adw.ToastOverlay toast_overlay;
 		[GtkChild] unowned Gtk.Stack stack;
 		[GtkChild] unowned Adw.StatusPage startup;
+		[GtkChild] unowned Adw.HeaderBar titlebar;
 		string? current_path;
 		Fs.Type current_fs_type = Fs.Type.NONE;
 
@@ -56,6 +57,7 @@ namespace SnapshotExplorer {
 #if ADW_HAS_SPINNER
 			startup.paintable = new Adw.SpinnerPaintable (startup);
 #endif
+			titlebar.pack_end (snapshots.loading_indicator);
 
 			refresh_folders.begin ();
 		}

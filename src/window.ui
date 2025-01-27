@@ -84,7 +84,7 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">0</property>
                     <child>
-                      <object class="AdwHeaderBar">
+                      <object class="AdwHeaderBar" id="titlebar">
                         <child type="start">
                           <object class="GtkButton" id="back">
                             <property name="icon-name">go-previous-symbolic</property>
