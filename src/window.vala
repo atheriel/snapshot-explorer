@@ -5,11 +5,14 @@
  */
 
 namespace SnapshotExplorer {
+	[GtkTemplate (ui = "/com/github/atheriel/snapshot-explorer/window.ui")]
 	public class Window : Adw.ApplicationWindow {
-		Gtk.Button back;
-		Gtk.ListBox folders;
-		SnapshotPane snapshots;
-		Adw.Leaflet view;
+		[GtkChild] unowned Gtk.Button back;
+		[GtkChild] unowned Gtk.ListBox folders;
+		[GtkChild] unowned SnapshotPane snapshots;
+		[GtkChild] unowned Adw.Leaflet view;
+		[GtkChild] unowned Adw.ToastOverlay toast_overlay;
+		[GtkChild] unowned Gtk.Stack stack;
 		string? current_path;
 		Fs.Type current_fs_type = Fs.Type.NONE;
 
@@ -19,16 +22,12 @@ namespace SnapshotExplorer {
 		};
 
 		public Window (Gtk.Application app) {
-			Object (
-				application: app,
-				title: _("Snapshot Explorer"),
-				default_height: 500,
-				default_width: 760
-			);
+			Object (application: app);
 		}
 
 		static construct {
 			Adw.init ();
+			typeof (SnapshotPane).ensure ();
 		}
 
 		construct {
@@ -38,46 +37,6 @@ namespace SnapshotExplorer {
 			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
 			app.set_accels_for_action ("win.shortcuts", {"<Control>question"});
 
-			var titlebar = new Adw.HeaderBar ();
-
-			back = new Gtk.Button.from_icon_name ("go-previous-symbolic") {
-				tooltip_text = _("Back to folders"),
-				// This should be invisible on startup, when no folder can be
-				// selected.
-				visible = false,
-			};
-			back.clicked.connect(on_back);
-			titlebar.pack_start(back);
-
-			var refresh = new Gtk.Button.from_icon_name ("view-refresh-symbolic") {
-				tooltip_text = _("Refresh folder list"),
-				action_name = "win.refresh"
-			};
-			titlebar.pack_start(refresh);
-
-			var menu = new Menu ();
-			var item = new MenuItem (_("Keyboard Shortcuts"), "win.shortcuts");
-			item.set_attribute ("accel", "s", "<Control>question");
-			menu.append_item (item);
-			item = new MenuItem (_("Quit"), "app.quit");
-			item.set_attribute ("accel", "s", "<Control>q");
-			menu.append_item (item);
-			titlebar.pack_end(new Gtk.MenuButton() {
-				tooltip_text = _("Menu"),
-				icon_name = "open-menu-symbolic",
-				menu_model = menu,
-			});
-
-			folders = new Gtk.ListBox () {
-				selection_mode = Gtk.SelectionMode.SINGLE,
-				vexpand = true,
-				css_classes = {"navigation-sidebar"},
-			};
-			folders.set_placeholder (new Adw.StatusPage () {
-				description = _("No mounted ZFS filesystems found."),
-				icon_name = "drive-multidisk-symbolic",
-				visible = true,
-			});
 			folders.row_activated.connect((row) => {
 				var folder = FolderItem.from_row (row);
 				view.visible_child_name = "pane";
@@ -86,32 +45,6 @@ namespace SnapshotExplorer {
 				snapshots.set_path.begin (current_path, current_fs_type);
 			});
 
-			snapshots = new SnapshotPane () {
-				width_request = 500,
-			};
-
-			var sidebar_container = new Gtk.ScrolledWindow () {
-				width_request = 200,
-				hscrollbar_policy = Gtk.PolicyType.NEVER,
-				hexpand = true,
-				margin_top = 6,
-				child = folders,
-			};
-
-			view = new Adw.Leaflet () {
-				transition_type = Adw.LeafletTransitionType.SLIDE,
-				// Only unfold when folders are available.
-				can_unfold = false,
-			};
-			var page = view.append (sidebar_container);
-			page.name = "sidebar";
-			page = view.append (new Gtk.Separator (Gtk.Orientation.VERTICAL));
-			page.name = "separator";
-			page.navigatable = false;
-			page = view.append (snapshots);
-			page.name = "pane";
-			view.set_visible_child_name ("sidebar");
-
 			view.notify["visible-child"].connect((s, p) => {
 				update_titlebar ();
 			});
@@ -119,16 +52,15 @@ namespace SnapshotExplorer {
 				update_titlebar ();
 			});
 
-			var wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-			wrapper.append (titlebar);
-			wrapper.append (view);
-			content = wrapper;
-
 			refresh_folders.begin ();
 		}
 
 		private async void refresh_folders () {
 			var zroot = yield Zfs.mountpoint_tree ();
+			if (zroot == null) {
+				stack.visible_child_name = "no-datasets";
+				return;
+			}
 			if (zroot != null) {
 				view.can_unfold = true;
 			}
@@ -139,6 +71,15 @@ namespace SnapshotExplorer {
 				new Gtk.TreeListModel (store, false, false, FolderItem.child_models),
 				FolderItem.create_row_widget
 			);
+
+			if (stack.visible_child_name != "main") {
+				stack.visible_child_name = "main";
+				return;
+			}
+
+			toast_overlay.add_toast (new Adw.Toast (_("Refreshed folders.")) {
+				timeout = 2,
+			});
 		}
 
 		private void update_titlebar () {
@@ -147,7 +88,8 @@ namespace SnapshotExplorer {
 			back.set_visible (folded && !viewing_sidebar);
 		}
 
-		private void on_back () {
+		[GtkCallback]
+		private void on_back (Gtk.Button button) {
 			view.visible_child_name = "sidebar";
 		}
 

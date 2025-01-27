@@ -7,7 +7,7 @@
     <property name="spacing">0</property>
     <child>
       <object class="GtkStack" id="stack">
-        <property name="valign">center</property>
+        <property name="vexpand">1</property>
         <child>
           <object class="GtkStackPage">
             <property name="name">startup</property>
@@ -17,6 +17,7 @@
                 <property name="description" translatable="yes">Choose a folder from a mounted ZFS filesystem
 to view snapshots.</property>
                 <property name="icon-name">folder-symbolic</property>
+                <property name="valign">center</property>
               </object>
             </property>
           </object>
@@ -29,6 +30,7 @@ to view snapshots.</property>
                 <property name="title" translatable="yes">No Snapshots</property>
                 <property name="description" translatable="yes">This ZFS dataset has no snapshots to explore.</property>
                 <property name="icon-name">preferences-system-time-symbolic</property>
+                <property name="valign">center</property>
               </object>
             </property>
           </object>
