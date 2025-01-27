@@ -9,6 +9,9 @@ namespace Zfs {
 		if (!yield has_zfs_utils ()) {
 			return null;
 		}
+		if (Environment.get_variable("SNAPSHOT_EXPLORER_DEBUG_LATENCY") == "1") {
+			yield nap(2000);
+		}
 		string[] argv;
 		if (sandboxed ()) {
 			argv = {
@@ -138,6 +141,9 @@ namespace Zfs {
 		if (!yield has_zfs_utils ()) {
 			return (owned) result;
 		}
+		if (Environment.get_variable("SNAPSHOT_EXPLORER_DEBUG_LATENCY") == "1") {
+			yield nap(2000);
+		}
 		string[] argv;
 		if (sandboxed ()) {
 			argv = {
@@ -230,5 +236,14 @@ namespace Zfs {
 #else
 		return false;
 #endif
+	}
+
+	// Async version of "sleep", from the Vala wiki.
+	private async void nap (uint interval, int priority = GLib.Priority.DEFAULT) {
+		GLib.Timeout.add (interval, () => {
+				nap.callback ();
+				return false;
+			}, priority);
+		yield;
 	}
 }
