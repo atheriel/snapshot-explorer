@@ -33,7 +33,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="AdwStatusPage"">
+                      <object class="AdwStatusPage" id="startup">
                         <property name="title" translatable="yes">Loading</property>
                         <property name="description" translatable="yes">Searching for mounted ZFS filesystems...</property>
                         <property name="icon-name">drive-multidisk-symbolic</property>

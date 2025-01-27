@@ -8,11 +8,19 @@ snapshot_explorer_sources = [
   'zfs.vala',
 ]
 
+adwaita_dep = dependency('libadwaita-1')
+
 snapshot_explorer_deps = [
   dependency('gio-2.0', version: '>= 2.50'),
   dependency('gtk4', version: '>= 4.0'),
-  dependency('libadwaita-1'),
+  adwaita_dep
 ]
+
+if adwaita_dep.version().version_compare('>=1.6')
+        add_project_arguments(
+                ['-D', 'ADW_HAS_SPINNER'], language: 'vala'
+        )
+endif
 
 gnome = import('gnome')
 snapshot_explorer_sources += gnome.compile_resources(

@@ -13,6 +13,7 @@ namespace SnapshotExplorer {
 		[GtkChild] unowned Adw.Leaflet view;
 		[GtkChild] unowned Adw.ToastOverlay toast_overlay;
 		[GtkChild] unowned Gtk.Stack stack;
+		[GtkChild] unowned Adw.StatusPage startup;
 		string? current_path;
 		Fs.Type current_fs_type = Fs.Type.NONE;
 
@@ -51,6 +52,10 @@ namespace SnapshotExplorer {
 			view.notify["folded"].connect((s, p) => {
 				update_titlebar ();
 			});
+
+#if ADW_HAS_SPINNER
+			startup.paintable = new Adw.SpinnerPaintable (startup);
+#endif
 
 			refresh_folders.begin ();
 		}
