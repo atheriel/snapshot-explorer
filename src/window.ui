@@ -158,6 +158,10 @@
       <attribute name="action">win.shortcuts</attribute>
     </item>
     <item>
+      <attribute name="label" translatable="yes">About Snapshot Explorer</attribute>
+      <attribute name="action">win.about</attribute>
+    </item>
+    <item>
       <attribute name="label" translatable="yes">Quit</attribute>
       <attribute name="action">app.quit</attribute>
     </item>

@@ -8,7 +8,7 @@ snapshot_explorer_sources = [
   'zfs.vala',
 ]
 
-adwaita_dep = dependency('libadwaita-1')
+adwaita_dep = dependency('libadwaita-1', version: '>=1.5')
 
 snapshot_explorer_deps = [
   dependency('gio-2.0', version: '>= 2.50'),

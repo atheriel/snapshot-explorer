@@ -23,6 +23,7 @@ namespace SnapshotExplorer {
 		const ActionEntry[] ACTION_ENTRIES = {
 			{ "refresh", on_refresh },
 			{ "shortcuts", on_shortcuts },
+			{ "about", on_about },
 		};
 
 		public Window (Gtk.Application app) {
@@ -111,6 +112,20 @@ namespace SnapshotExplorer {
 				.get_object ("shortcuts");
 			win.transient_for = this;
 			win.present ();
+		}
+
+		private void on_about () {
+			var dialog = new Adw.AboutDialog () {
+				application_name = _("Snapshot Explorer"),
+				application_icon = "org.github.atheriel.snapshot-explorer",
+				version = "0.1.0",
+				comments = _("Browse local ZFS snapshots using the system file manager."),
+				developer_name = "Aaron Jacobs",
+				copyright = "© 2021 Aaron Jacobs",
+				license_type = Gtk.License.GPL_3_0,
+				developers = { "Aaron Jacobs" },
+			};
+			dialog.present (this);
 		}
 	}
 
