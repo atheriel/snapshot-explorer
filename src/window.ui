@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="libadwaita" version="1.1"/>
+  <requires lib="libadwaita" version="1.4"/>
   <requires lib="gtk+" version="4.0"/>
   <template class="SnapshotExplorerWindow" parent="AdwApplicationWindow">
     <property name="default-width">760</property>
@@ -15,10 +15,8 @@
               <object class="GtkStackPage">
                 <property name="name">startup</property>
                 <property name="child">
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">0</property>
-                    <child>
+                  <object class="AdwToolbarView">
+                    <child type="top">
                       <object class="AdwHeaderBar">
                         <style>
                           <class name="flat"/>
@@ -32,14 +30,14 @@
                         </child>
                       </object>
                     </child>
-                    <child>
+                    <property name="content">
                       <object class="AdwStatusPage" id="startup">
                         <property name="title" translatable="yes">Loading</property>
                         <property name="description" translatable="yes">Searching for mounted ZFS filesystems...</property>
                         <property name="icon-name">drive-multidisk-symbolic</property>
                         <property name="vexpand">1</property>
                       </object>
-                    </child>
+                    </property>
                   </object>
                 </property>
               </object>
@@ -48,10 +46,8 @@
               <object class="GtkStackPage">
                 <property name="name">no-datasets</property>
                 <property name="child">
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">0</property>
-                    <child>
+                  <object class="AdwToolbarView">
+                    <child type="top">
                       <object class="AdwHeaderBar">
                         <style>
                           <class name="flat"/>
@@ -65,13 +61,13 @@
                         </child>
                       </object>
                     </child>
-                    <child>
+                    <property name="content">
                       <object class="AdwStatusPage">
                         <property name="description" translatable="yes">No mounted ZFS filesystems found.</property>
                         <property name="icon-name">drive-multidisk-symbolic</property>
                         <property name="vexpand">1</property>
                       </object>
-                    </child>
+                    </property>
                   </object>
                 </property>
               </object>
@@ -80,50 +76,34 @@
               <object class="GtkStackPage">
                 <property name="name">main</property>
                 <property name="child">
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">0</property>
-                    <child>
-                      <object class="AdwHeaderBar" id="titlebar">
-                        <child type="start">
-                          <object class="GtkButton" id="back">
-                            <property name="icon-name">go-previous-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Back to folders</property>
-                            <!-- Should be invisible on startup, when no folder can be selected. -->
-                            <property name="visible">0</property>
-                            <signal name="clicked" handler="on_back" object="SnapshotExplorerWindow" swapped="no"/>
-                          </object>
-                        </child>
-                        <child type="start">
-                          <object class="GtkButton">
-                            <property name="icon-name">view-refresh-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Refresh folder list</property>
-                            <property name="action-name">win.refresh</property>
-                          </object>
-                        </child>
-                        <child type="end">
-                          <object class="GtkMenuButton">
-                            <property name="icon-name">open-menu-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Menu</property>
-                            <property name="menu-model">menu</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="AdwLeaflet" id="view">
-                        <property name="transition-type">slide</property>
-                        <property name="can-unfold">1</property>
-                        <property name="vexpand">1</property>
-                        <child>
-                          <object class="AdwLeafletPage">
-                            <property name="name">sidebar</property>
-                            <property name="child">
+                  <object class="AdwNavigationSplitView" id="view">
+                    <property name="vexpand">1</property>
+                    <property name="sidebar">
+                      <object class="AdwNavigationPage">
+                        <property name="title" translatable="yes">Folders</property>
+                        <property name="child">
+                          <object class="AdwToolbarView">
+                            <child type="top">
+                              <object class="AdwHeaderBar">
+                                <child type="start">
+                                  <object class="GtkButton">
+                                    <property name="icon-name">view-refresh-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Refresh folder list</property>
+                                    <property name="action-name">win.refresh</property>
+                                  </object>
+                                </child>
+                                <child type="end">
+                                  <object class="GtkMenuButton">
+                                    <property name="icon-name">open-menu-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Menu</property>
+                                    <property name="menu-model">menu</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <property name="content">
                               <object class="GtkScrolledWindow">
-                                <property name="width-request">200</property>
                                 <property name="hscrollbar-policy">never</property>
-                                <property name="hexpand">1</property>
-                                <property name="margin-top">6</property>
                                 <property name="child">
                                   <object class="GtkListBox" id="folders">
                                     <property name="selection-mode">single</property>
@@ -136,30 +116,33 @@
                               </object>
                             </property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="AdwLeafletPage">
-                            <property name="name">separator</property>
-                            <property name="navigatable">0</property>
-                            <property name="child">
-                              <object class="GtkSeparator">
-                                <property name="orientation">vertical</property>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="AdwLeafletPage">
-                            <property name="name">pane</property>
-                            <property name="child">
-                              <object class="SnapshotPane" id="snapshots">
-                                <property name="width-request">500</property>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
+                        </property>
                       </object>
-                    </child>
+                    </property>
+                    <property name="content">
+                      <object class="AdwNavigationPage">
+                        <property name="title" translatable="yes">Snapshots</property>
+                        <property name="child">
+                          <object class="AdwToolbarView">
+                            <child type="top">
+                              <object class="AdwHeaderBar" id="titlebar">
+                                <child type="start">
+                                  <object class="GtkButton" id="back">
+                                    <property name="icon-name">go-previous-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Back to folders</property>
+                                    <property name="visible">0</property>
+                                    <signal name="clicked" handler="on_back" object="SnapshotExplorerWindow" swapped="no"/>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <property name="content">
+                              <object class="SnapshotPane" id="snapshots"/>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
                   </object>
                 </property>
               </object>

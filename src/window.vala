@@ -10,11 +10,13 @@ namespace SnapshotExplorer {
 		[GtkChild] unowned Gtk.Button back;
 		[GtkChild] unowned Gtk.ListBox folders;
 		[GtkChild] unowned SnapshotPane snapshots;
-		[GtkChild] unowned Adw.Leaflet view;
+		[GtkChild] unowned Adw.NavigationSplitView view;
 		[GtkChild] unowned Adw.ToastOverlay toast_overlay;
 		[GtkChild] unowned Gtk.Stack stack;
+		[GtkChild] new unowned Adw.HeaderBar titlebar;
+#if ADW_HAS_SPINNER
 		[GtkChild] unowned Adw.StatusPage startup;
-		[GtkChild] unowned Adw.HeaderBar titlebar;
+#endif
 		string? current_path;
 		Fs.Type current_fs_type = Fs.Type.NONE;
 
@@ -41,16 +43,16 @@ namespace SnapshotExplorer {
 
 			folders.row_activated.connect((row) => {
 				var folder = FolderItem.from_row (row);
-				view.visible_child_name = "pane";
+				view.show_content = true;
 				current_path = folder.path.dup ();
 				current_fs_type = folder.type;
 				snapshots.set_path.begin (current_path, current_fs_type);
 			});
 
-			view.notify["visible-child"].connect((s, p) => {
+			view.notify["show-content"].connect((s, p) => {
 				update_titlebar ();
 			});
-			view.notify["folded"].connect((s, p) => {
+			view.notify["collapsed"].connect((s, p) => {
 				update_titlebar ();
 			});
 
@@ -67,9 +69,6 @@ namespace SnapshotExplorer {
 			if (zroot == null) {
 				stack.visible_child_name = "no-datasets";
 				return;
-			}
-			if (zroot != null) {
-				view.can_unfold = true;
 			}
 			var store = new GLib.ListStore (typeof(FolderItem));
 			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"),
@@ -90,18 +89,16 @@ namespace SnapshotExplorer {
 		}
 
 		private void update_titlebar () {
-			var viewing_sidebar = view.visible_child_name == "sidebar";
-			var folded = view.folded;
-			back.set_visible (folded && !viewing_sidebar);
+			back.set_visible (view.collapsed && view.show_content);
 		}
 
 		[GtkCallback]
 		private void on_back (Gtk.Button button) {
-			view.visible_child_name = "sidebar";
+			view.show_content = false;
 		}
 
 		private void on_refresh () {
-			if (view.visible_child_name == "sidebar") {
+			if (!view.collapsed || !view.show_content) {
 				refresh_folders.begin ();
 			} else {
 				snapshots.set_path.begin (current_path, current_fs_type);
