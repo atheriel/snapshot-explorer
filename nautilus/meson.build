@@ -1,5 +1,6 @@
 extension_sources = [
   'extension.vala',
+  'fs.vala',
   'shim.c',
   'zfs.vala',
 ]

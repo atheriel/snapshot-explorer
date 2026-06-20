@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="libadwaita" version="1.1"/>
+  <requires lib="gtk+" version="4.0"/>
+  <template class="SnapshotPane" parent="GtkBox">
+    <property name="orientation">vertical</property>
+    <property name="spacing">0</property>
+    <child>
+      <object class="GtkStack" id="stack">
+        <property name="vexpand">1</property>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">startup</property>
+            <property name="child">
+              <object class="AdwStatusPage">
+                <property name="title" translatable="yes">Select a Folder</property>
+                <property name="description" translatable="yes">Choose a folder from a mounted ZFS filesystem
+to view snapshots.</property>
+                <property name="icon-name">folder-symbolic</property>
+                <property name="valign">center</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">no-snapshots</property>
+            <property name="child">
+              <object class="AdwStatusPage">
+                <property name="title" translatable="yes">No Snapshots</property>
+                <property name="description" translatable="yes">This ZFS dataset has no snapshots to explore.</property>
+                <property name="icon-name">preferences-system-time-symbolic</property>
+                <property name="valign">center</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="name">snapshots</property>
+            <property name="child">
+              <object class="AdwPreferencesPage">
+                <child>
+                  <object class="AdwPreferencesGroup" id="today_section">
+                    <property name="title" translatable="yes">Today</property>
+                    <child>
+                      <object class="GtkListBox" id="today">
+                        <style>
+                          <class name="boxed-list"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwPreferencesGroup" id="yesterday_section">
+                    <property name="title" translatable="yes">Yesterday</property>
+                    <child>
+                      <object class="GtkListBox" id="yesterday">
+                        <style>
+                          <class name="boxed-list"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwPreferencesGroup" id="earlier_this_week_section">
+                    <property name="title" translatable="yes">Earlier This Week</property>
+                    <child>
+                      <object class="GtkListBox" id="earlier_this_week">
+                        <style>
+                          <class name="boxed-list"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwPreferencesGroup" id="earlier_this_year_section">
+                    <property name="title" translatable="yes">Earlier This Year</property>
+                    <child>
+                      <object class="GtkListBox" id="earlier_this_year">
+                        <style>
+                          <class name="boxed-list"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwPreferencesGroup" id="previous_years_section">
+                    <property name="title" translatable="yes">Previous Years</property>
+                    <child>
+                      <object class="GtkListBox" id="previous_years">
+                        <style>
+                          <class name="boxed-list"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

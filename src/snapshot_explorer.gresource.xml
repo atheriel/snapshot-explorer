@@ -6,6 +6,9 @@
 
 <gresources>
   <gresource prefix="/com/github/atheriel/snapshot-explorer">
-    <file>shortcuts.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">shortcuts.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">snapshot-pane.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">snapshot-row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
   </gresource>
 </gresources>

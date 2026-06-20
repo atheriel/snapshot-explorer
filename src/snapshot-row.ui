@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="libadwaita" version="1.1"/>
+  <requires lib="gtk+" version="4.0"/>
+  <template class="SnapshotRow" parent="AdwActionRow">
+    <style>
+      <class name="numeric"/>
+      <class name="property"/>
+    </style>
+    <child type="suffix">
+      <object class="GtkButton" id="browse">
+        <property name="icon-name">folder-symbolic</property>
+        <property name="tooltip-text" translatable="yes">Browse in file manager</property>
+        <property name="margin_top">6</property>
+        <property name="margin_bottom">6</property>
+        <!-- <signal name="clicked" handler="cb_browse" object="SnapshotRow" swapped="no"/> -->
+      </object>
+    </child>
+  </template>
+</interface>

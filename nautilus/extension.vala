@@ -8,7 +8,7 @@ class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 	private Gtk.InfoBar bar;
 	private Gtk.Label label;
 	private Cancellable cancellable;
-	private Zfs.Snapshot? snapshot;
+	private Fs.Snapshot? snapshot;
 
 	construct {
 		label = new Gtk.Label ("") {
