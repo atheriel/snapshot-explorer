@@ -9,7 +9,7 @@ namespace SnapshotExplorer {
 	public class Window : Adw.ApplicationWindow {
 		[GtkChild] unowned Gtk.ListBox folders;
 		[GtkChild] unowned SnapshotPane snapshots;
-		[GtkChild] unowned Adw.NavigationSplitView view;
+		[GtkChild] unowned Adw.OverlaySplitView view;
 		[GtkChild] unowned Adw.ToastOverlay toast_overlay;
 		[GtkChild] unowned Gtk.Stack stack;
 		[GtkChild] new unowned Adw.HeaderBar titlebar;
@@ -43,10 +43,19 @@ namespace SnapshotExplorer {
 
 			folders.row_activated.connect((row) => {
 				var folder = FolderItem.from_row (row);
-				view.show_content = true;
+				if (view.collapsed) {
+					view.show_sidebar = false;
+				}
 				current_path = folder.path.dup ();
 				current_fs_type = folder.type;
 				snapshots.set_path.begin (current_path, current_fs_type);
+			});
+
+			// Make sure the sidebar is visible if there is room for it.
+			view.notify["collapsed"].connect (() => {
+				if (!view.collapsed) {
+					view.show_sidebar = true;
+				}
 			});
 
 #if ADW_HAS_SPINNER
@@ -82,7 +91,7 @@ namespace SnapshotExplorer {
 		}
 
 		private void on_refresh () {
-			if (!view.collapsed || !view.show_content) {
+			if (!view.collapsed || view.show_sidebar) {
 				refresh_folders.begin ();
 			} else {
 				snapshots.set_path.begin (current_path, current_fs_type);
