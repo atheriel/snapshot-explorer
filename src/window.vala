@@ -7,7 +7,6 @@
 namespace SnapshotExplorer {
 	[GtkTemplate (ui = "/com/github/atheriel/snapshot-explorer/window.ui")]
 	public class Window : Adw.ApplicationWindow {
-		[GtkChild] unowned Gtk.Button back;
 		[GtkChild] unowned Gtk.ListBox folders;
 		[GtkChild] unowned SnapshotPane snapshots;
 		[GtkChild] unowned Adw.NavigationSplitView view;
@@ -50,13 +49,6 @@ namespace SnapshotExplorer {
 				snapshots.set_path.begin (current_path, current_fs_type);
 			});
 
-			view.notify["show-content"].connect((s, p) => {
-				update_titlebar ();
-			});
-			view.notify["collapsed"].connect((s, p) => {
-				update_titlebar ();
-			});
-
 #if ADW_HAS_SPINNER
 			startup.paintable = new Adw.SpinnerPaintable (startup);
 #endif
@@ -87,15 +79,6 @@ namespace SnapshotExplorer {
 			toast_overlay.add_toast (new Adw.Toast (_("Refreshed folders.")) {
 				timeout = 2,
 			});
-		}
-
-		private void update_titlebar () {
-			back.set_visible (view.collapsed && view.show_content);
-		}
-
-		[GtkCallback]
-		private void on_back (Gtk.Button button) {
-			view.show_content = false;
 		}
 
 		private void on_refresh () {

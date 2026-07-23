@@ -126,14 +126,6 @@
                           <object class="AdwToolbarView">
                             <child type="top">
                               <object class="AdwHeaderBar" id="titlebar">
-                                <child type="start">
-                                  <object class="GtkButton" id="back">
-                                    <property name="icon-name">go-previous-symbolic</property>
-                                    <property name="tooltip-text" translatable="yes">Back to folders</property>
-                                    <property name="visible">0</property>
-                                    <signal name="clicked" handler="on_back" object="SnapshotExplorerWindow" swapped="no"/>
-                                  </object>
-                                </child>
                               </object>
                             </child>
                             <property name="content">
