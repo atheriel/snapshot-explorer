@@ -57,6 +57,10 @@ class SnapshotPane : Gtk.Box {
 
 		if (entries.length () == 0) {
 			stack.visible_child_name = "no-snapshots";
+			loading_indicator.visible = false;
+#if !ADW_HAS_SPINNER
+			loading_indicator.spinning = false;
+#endif
 			return;
 		}
 
