@@ -8,7 +8,8 @@ namespace Fs {
 	public enum Type {
 		BTRFS,
 		ZFS,
-		NONE,
+		OTHER,
+		UNKNOWN,
 	}
 
 	public class Snapshot {

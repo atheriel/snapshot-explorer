@@ -17,7 +17,7 @@ namespace SnapshotExplorer {
 		[GtkChild] unowned Adw.StatusPage startup;
 #endif
 		string? current_path;
-		Fs.Type current_fs_type = Fs.Type.NONE;
+		Fs.Type current_fs_type = Fs.Type.UNKNOWN;
 
 		const ActionEntry[] ACTION_ENTRIES = {
 			{ "refresh", on_refresh },
@@ -181,7 +181,7 @@ namespace SnapshotExplorer {
 
 		protected FolderItem.header (string heading) {
 			this.label = heading;
-			this.type = Fs.Type.NONE;
+			this.type = Fs.Type.UNKNOWN;
 			this.heading = true;
 		}
 

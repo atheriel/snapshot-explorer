@@ -37,6 +37,19 @@ to view snapshots.</property>
         </child>
         <child>
           <object class="GtkStackPage">
+            <property name="name">not-supported</property>
+            <property name="child">
+              <object class="AdwStatusPage">
+                <property name="title" translatable="yes">Not Supported</property>
+                <property name="description" translatable="yes">Only folders on ZFS filesystems are supported.</property>
+                <property name="icon-name">dialog-error-symbolic</property>
+                <property name="valign">center</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
             <property name="name">snapshots</property>
             <property name="child">
               <object class="AdwPreferencesPage">

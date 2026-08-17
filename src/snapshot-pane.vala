@@ -39,7 +39,7 @@ class SnapshotPane : Gtk.Box {
 	}
 
 	public async void set_path (string? path, Fs.Type fs_type) {
-		if (path == null || fs_type == Fs.Type.NONE) {
+		if (path == null) {
 			return;
 		}
 
@@ -49,18 +49,17 @@ class SnapshotPane : Gtk.Box {
 #endif
 
 		List<Fs.Snapshot> entries;
-		if (fs_type == Fs.Type.ZFS) {
+		switch (fs_type) {
+		case Fs.Type.ZFS:
 			entries = yield Zfs.snapshots_for_path ((!) path);
-		} else {
+			break;
+		default:
+			show_page ("not-supported");
 			return;
 		}
 
 		if (entries.length () == 0) {
-			stack.visible_child_name = "no-snapshots";
-			loading_indicator.visible = false;
-#if !ADW_HAS_SPINNER
-			loading_indicator.spinning = false;
-#endif
+			show_page ("no-snapshots");
 			return;
 		}
 
@@ -103,7 +102,13 @@ class SnapshotPane : Gtk.Box {
 			}
 		});
 
-		stack.visible_child_name = "snapshots";
+		show_page ("snapshots");
+	}
+
+	private void show_page (string name) {
+		stack.visible_child_name = name;
+
+		// We're done loading at this point.
 		loading_indicator.visible = false;
 #if !ADW_HAS_SPINNER
 		loading_indicator.spinning = false;
