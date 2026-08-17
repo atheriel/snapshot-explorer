@@ -30,7 +30,6 @@ namespace SnapshotExplorer {
 		}
 
 		static construct {
-			Adw.init ();
 			typeof (SnapshotPane).ensure ();
 		}
 
