@@ -1,6 +1,6 @@
 /* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*- */
 
-[GtkTemplate (ui = "/com/github/atheriel/snapshot-explorer/snapshot-pane.ui")]
+[GtkTemplate (ui = "/org/github/atheriel/snapshot-explorer/snapshot-pane.ui")]
 class SnapshotPane : Gtk.Box {
 #if ADW_HAS_SPINNER
 	public Adw.Spinner loading_indicator { get; construct set; }

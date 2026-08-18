@@ -5,7 +5,7 @@
  */
 
 namespace SnapshotExplorer {
-	[GtkTemplate (ui = "/com/github/atheriel/snapshot-explorer/window.ui")]
+	[GtkTemplate (ui = "/org/github/atheriel/snapshot-explorer/window.ui")]
 	public class Window : Adw.ApplicationWindow {
 		[GtkChild] unowned Gtk.ListBox folders;
 		[GtkChild] unowned SnapshotPane snapshots;
@@ -99,7 +99,7 @@ namespace SnapshotExplorer {
 
 		private void on_shortcuts () {
 			var win = (Gtk.Window) new Gtk.Builder.from_resource (
-				"/com/github/atheriel/snapshot-explorer/shortcuts.ui")
+				"/org/github/atheriel/snapshot-explorer/shortcuts.ui")
 				.get_object ("shortcuts");
 			win.transient_for = this;
 			win.present ();

@@ -1,6 +1,6 @@
 /* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*- */
 
-[GtkTemplate (ui = "/com/github/atheriel/snapshot-explorer/snapshot-row.ui")]
+[GtkTemplate (ui = "/org/github/atheriel/snapshot-explorer/snapshot-row.ui")]
 class SnapshotRow : Adw.ActionRow {
 	public unowned Fs.Snapshot entry { get; construct; }
 
