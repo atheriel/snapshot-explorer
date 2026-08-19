@@ -1,4 +1,8 @@
-/* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*- */
+/* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*-
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-FileCopyrightText: Copyright 2025 Aaron Jacobs
+ */
 
 [GtkTemplate (ui = "/org/github/atheriel/snapshot-explorer/snapshot-row.ui")]
 class SnapshotRow : Adw.ActionRow {

@@ -1,7 +1,7 @@
 /* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*-
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: 2026 Aaron Jacobs
+ * SPDX-FileCopyrightText: Copyright 2021 Aaron Jacobs
  */
 
 namespace SnapshotExplorer {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-18 23:48-0400\n"
+"POT-Creation-Date: 2026-08-19 00:04-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/org.github.atheriel.snapshot-explorer.desktop.in:3 src/window.ui:10
+#: data/org.github.atheriel.snapshot-explorer.desktop.in:3 src/window.ui:15
 #: src/window.vala:110
 msgid "Snapshot Explorer"
 msgstr ""
@@ -55,11 +55,11 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/fs.vala:51 src/snapshot-pane.ui:58
+#: src/fs.vala:51 src/snapshot-pane.ui:63
 msgid "Today"
 msgstr ""
 
-#: src/fs.vala:54 src/snapshot-pane.ui:70
+#: src/fs.vala:54 src/snapshot-pane.ui:75
 msgid "Yesterday"
 msgstr ""
 
@@ -68,109 +68,109 @@ msgstr ""
 msgid "%s at %s"
 msgstr ""
 
-#: src/shortcuts.ui:10
+#: src/shortcuts.ui:15
 msgid "All"
 msgstr ""
 
-#: src/shortcuts.ui:14
+#: src/shortcuts.ui:19
 msgid "General"
 msgstr ""
 
-#: src/shortcuts.ui:18
+#: src/shortcuts.ui:23
 msgid "Reload folders and snapshots"
 msgstr ""
 
-#: src/shortcuts.ui:25
+#: src/shortcuts.ui:30
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: src/shortcuts.ui:32 src/window.ui:174
+#: src/shortcuts.ui:37 src/window.ui:179
 msgid "Quit"
 msgstr ""
 
-#: src/snapshot-pane.ui:16
+#: src/snapshot-pane.ui:21
 msgid "Select a Folder"
 msgstr ""
 
-#: src/snapshot-pane.ui:17
+#: src/snapshot-pane.ui:22
 msgid ""
 "Choose a folder from a mounted ZFS filesystem\n"
 "to view snapshots."
 msgstr ""
 
-#: src/snapshot-pane.ui:30
+#: src/snapshot-pane.ui:35
 msgid "No Snapshots"
 msgstr ""
 
-#: src/snapshot-pane.ui:31
+#: src/snapshot-pane.ui:36
 msgid "This ZFS dataset has no snapshots to explore."
 msgstr ""
 
-#: src/snapshot-pane.ui:43
+#: src/snapshot-pane.ui:48
 msgid "Not Supported"
 msgstr ""
 
-#: src/snapshot-pane.ui:44
+#: src/snapshot-pane.ui:49
 msgid "Only folders on ZFS filesystems are supported."
 msgstr ""
 
-#: src/snapshot-pane.ui:82
+#: src/snapshot-pane.ui:87
 msgid "Earlier This Week"
 msgstr ""
 
-#: src/snapshot-pane.ui:94
+#: src/snapshot-pane.ui:99
 msgid "Earlier This Year"
 msgstr ""
 
-#: src/snapshot-pane.ui:106
+#: src/snapshot-pane.ui:111
 msgid "Previous Years"
 msgstr ""
 
-#: src/snapshot-pane.vala:27 src/snapshot-pane.vala:32
+#: src/snapshot-pane.vala:31 src/snapshot-pane.vala:36
 msgid "Loading snapshots..."
 msgstr ""
 
-#: src/snapshot-row.ui:13
+#: src/snapshot-row.ui:18
 msgid "Browse in file manager"
 msgstr ""
 
-#: src/window.ui:36 src/window.ui:67 src/window.ui:109
+#: src/window.ui:41 src/window.ui:72 src/window.ui:114
 msgid "Menu"
 msgstr ""
 
-#: src/window.ui:44
+#: src/window.ui:49
 msgid "Loading"
 msgstr ""
 
-#: src/window.ui:45
+#: src/window.ui:50
 msgid "Searching for mounted ZFS filesystems..."
 msgstr ""
 
-#: src/window.ui:75
+#: src/window.ui:80
 msgid "No mounted ZFS filesystems found."
 msgstr ""
 
-#: src/window.ui:96
+#: src/window.ui:101
 msgid "Folders"
 msgstr ""
 
-#: src/window.ui:102
+#: src/window.ui:107
 msgid "Refresh folder list"
 msgstr ""
 
-#: src/window.ui:137
+#: src/window.ui:142
 msgid "Snapshots"
 msgstr ""
 
-#: src/window.ui:143
+#: src/window.ui:148
 msgid "Show Folders"
 msgstr ""
 
-#: src/window.ui:166
+#: src/window.ui:171
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: src/window.ui:170
+#: src/window.ui:175
 msgid "About Snapshot Explorer"
 msgstr ""
 

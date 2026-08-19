@@ -1,7 +1,7 @@
 /* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*-
  *
  * SPDX-License-Identifier: LGPL-2.1-or-later
- * SPDX-FileCopyrightText: 2023 Aaron Jacobs
+ * SPDX-FileCopyrightText: Copyright 2022 Aaron Jacobs
  */
 
 namespace Fs {

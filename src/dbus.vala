@@ -1,7 +1,7 @@
 /* -*- mode: vala; indent-tabs-mode: nil; tab-width: 4 -*-
  *
  * SPDX-License-Identifier: LGPL-2.1-or-later
- * SPDX-FileCopyrightText: 2021 Aaron Jacobs
+ * SPDX-FileCopyrightText: Copyright 2021 Aaron Jacobs
  */
 
 /* DBus client for opening folders with the system's file manager. Implemented

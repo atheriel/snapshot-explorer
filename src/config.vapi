@@ -1,6 +1,7 @@
 /* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*-
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-FileCopyrightText: Copyright 2026 Aaron Jacobs
  */
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "config.h")]
 namespace Config {

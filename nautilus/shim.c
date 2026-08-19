@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ * SPDX-FileCopyrightText: Copyright 2021 Aaron Jacobs
+ */
+
 #include <glib-object.h>
 
 /* Vala's C bindings are not currently able to handle the type signature require
