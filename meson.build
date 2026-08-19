@@ -6,6 +6,8 @@ project('snapshot-explorer', ['c', 'vala'],
   ],
 )
 
+application_id = 'org.github.atheriel.snapshot-explorer'
+
 vapi_dir = meson.current_source_dir() / 'vapi'
 add_project_arguments(['--vapidir', vapi_dir, '--enable-experimental-non-null'],
                       language: 'vala')
@@ -20,6 +22,8 @@ add_project_arguments(
 )
 
 conf = configuration_data()
+conf.set_quoted('APP_ID', application_id)
+conf.set_quoted('VERSION', meson.project_version())
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 config_h = configure_file(output: 'config.h', configuration: conf)

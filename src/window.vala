@@ -108,8 +108,8 @@ namespace SnapshotExplorer {
 		private void on_about () {
 			var dialog = new Adw.AboutDialog () {
 				application_name = _("Snapshot Explorer"),
-				application_icon = "org.github.atheriel.snapshot-explorer",
-				version = "0.1.0",
+				application_icon = Config.APP_ID,
+				version = Config.VERSION,
 				comments = _("Browse local ZFS snapshots using the system file manager."),
 				developer_name = "Aaron Jacobs",
 				copyright = "© 2021 Aaron Jacobs",
