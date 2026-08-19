@@ -37,8 +37,8 @@ Planned features:
 You'll need the following dependencies, using Debian-style package names:
 
 * `libglib2.0-dev`
-* `libgtk-3-dev`
-* `libhandy-1-dev` (for the application)
+* `libgtk-4-dev`
+* `libadwaita-1-dev` (for the application)
 * `libnautilus-extension-dev` (for the Nautilus extension)
 * `meson`
 * `valac`
