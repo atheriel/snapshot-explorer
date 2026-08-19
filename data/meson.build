@@ -1,6 +1,12 @@
+desktop_file_in = configure_file(
+  input: ('@0@.desktop.in.in').format(application_id),
+  output: ('@0@.desktop.in').format(application_id),
+  configuration: data_conf
+)
+
 desktop_file = i18n.merge_file(
-  input: 'org.github.atheriel.snapshot-explorer.desktop.in',
-  output: 'org.github.atheriel.snapshot-explorer.desktop',
+  input: desktop_file_in,
+  output: ('@0@.desktop').format(application_id),
   type: 'desktop',
   po_dir: '../po',
   install: true,
