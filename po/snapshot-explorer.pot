@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-25 21:48-0500\n"
+"POT-Creation-Date: 2026-08-18 21:52-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/org.github.atheriel.snapshot-explorer.desktop.in:3 src/window.vala:31
+#: data/org.github.atheriel.snapshot-explorer.desktop.in:3 src/window.ui:10
+#: src/window.vala:110
 msgid "Snapshot Explorer"
 msgstr ""
 
@@ -54,64 +55,133 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/window.vala:41
-msgid "Refresh the folder list."
-msgstr ""
-
-#: src/window.vala:58
-msgid "Folders"
-msgstr ""
-
-#: src/window.vala:69
-msgid "No snapshot-capable folders found."
-msgstr ""
-
-#: src/window.vala:102
-msgid "Missing something?"
-msgstr ""
-
-#: src/window.vala:120
-msgid "Choose a folder to view snapshots, if any."
-msgstr ""
-
-#: src/window.vala:157
-msgid "ZFS Dataset"
-msgstr ""
-
-#: src/window.vala:191
-msgid "No snapshots found."
-msgstr ""
-
-#: src/window.vala:205
-#, c-format
-msgid "ZFS Snapshot: %s"
-msgstr ""
-
-#: src/window.vala:209
-msgid "Browse"
-msgstr ""
-
-#: src/window.vala:247 src/zfs.vala:40
+#: src/fs.vala:51 src/snapshot-pane.ui:58
 msgid "Today"
 msgstr ""
 
-#: src/window.vala:248 src/zfs.vala:43
+#: src/fs.vala:54 src/snapshot-pane.ui:70
 msgid "Yesterday"
 msgstr ""
 
-#: src/window.vala:249
+#: src/fs.vala:67
+#, c-format
+msgid "%s at %s"
+msgstr ""
+
+#: src/shortcuts.ui:10
+msgid "All"
+msgstr ""
+
+#: src/shortcuts.ui:14
+msgid "General"
+msgstr ""
+
+#: src/shortcuts.ui:18
+msgid "Reload folders and snapshots"
+msgstr ""
+
+#: src/shortcuts.ui:25
+msgid "Keyboard shortcuts"
+msgstr ""
+
+#: src/shortcuts.ui:32 src/window.ui:174
+msgid "Quit"
+msgstr ""
+
+#: src/snapshot-pane.ui:16
+msgid "Select a Folder"
+msgstr ""
+
+#: src/snapshot-pane.ui:17
+msgid ""
+"Choose a folder from a mounted ZFS filesystem\n"
+"to view snapshots."
+msgstr ""
+
+#: src/snapshot-pane.ui:30
+msgid "No Snapshots"
+msgstr ""
+
+#: src/snapshot-pane.ui:31
+msgid "This ZFS dataset has no snapshots to explore."
+msgstr ""
+
+#: src/snapshot-pane.ui:43
+msgid "Not Supported"
+msgstr ""
+
+#: src/snapshot-pane.ui:44
+msgid "Only folders on ZFS filesystems are supported."
+msgstr ""
+
+#: src/snapshot-pane.ui:82
 msgid "Earlier This Week"
 msgstr ""
 
-#: src/window.vala:250
+#: src/snapshot-pane.ui:94
 msgid "Earlier This Year"
 msgstr ""
 
-#: src/window.vala:251
+#: src/snapshot-pane.ui:106
 msgid "Previous Years"
 msgstr ""
 
-#: src/zfs.vala:56
-#, c-format
-msgid "%s at %s"
+#: src/snapshot-pane.vala:27 src/snapshot-pane.vala:32
+msgid "Loading snapshots..."
+msgstr ""
+
+#: src/snapshot-row.ui:13
+msgid "Browse in file manager"
+msgstr ""
+
+#: src/window.ui:36 src/window.ui:67 src/window.ui:109
+msgid "Menu"
+msgstr ""
+
+#: src/window.ui:44
+msgid "Loading"
+msgstr ""
+
+#: src/window.ui:45
+msgid "Searching for mounted ZFS filesystems..."
+msgstr ""
+
+#: src/window.ui:75
+msgid "No mounted ZFS filesystems found."
+msgstr ""
+
+#: src/window.ui:96
+msgid "Folders"
+msgstr ""
+
+#: src/window.ui:102
+msgid "Refresh folder list"
+msgstr ""
+
+#: src/window.ui:137
+msgid "Snapshots"
+msgstr ""
+
+#: src/window.ui:143
+msgid "Show Folders"
+msgstr ""
+
+#: src/window.ui:166
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: src/window.ui:170
+msgid "About Snapshot Explorer"
+msgstr ""
+
+#: src/window.vala:75
+msgid "ZFS Datasets"
+msgstr ""
+
+#: src/window.vala:87
+msgid "Refreshed folders."
+msgstr ""
+
+#: src/window.vala:113
+msgid "Browse local ZFS snapshots using the system file manager."
 msgstr ""

@@ -19,6 +19,14 @@ add_project_arguments(
   '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()), language: 'c'
 )
 
+conf = configuration_data()
+conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
+config_h = configure_file(output: 'config.h', configuration: conf)
+config_dep = declare_dependency(
+  sources: config_h, include_directories: include_directories('.')
+)
+
 subdir('data')
 subdir('src')
 subdir('po')

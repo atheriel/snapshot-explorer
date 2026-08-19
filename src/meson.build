@@ -1,4 +1,5 @@
 snapshot_explorer_sources = [
+  'config.vapi',
   'dbus.vala',
   'fs.vala',
   'main.vala',
@@ -11,6 +12,7 @@ snapshot_explorer_sources = [
 adwaita_dep = dependency('libadwaita-1', version: '>=1.5')
 
 snapshot_explorer_deps = [
+  config_dep,
   dependency('gio-2.0', version: '>= 2.50'),
   dependency('gtk4', version: '>= 4.0'),
   adwaita_dep
