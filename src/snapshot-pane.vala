@@ -131,7 +131,7 @@ class SnapshotPane : Gtk.Box {
 
 	private async void start_bus () {
 		try {
-			fm = Bus.get_proxy_sync (
+			fm = yield Bus.get_proxy (
 				BusType.SESSION,
 				"org.freedesktop.FileManager1",
 				"/org/freedesktop/FileManager1"
