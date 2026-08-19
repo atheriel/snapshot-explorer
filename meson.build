@@ -7,6 +7,8 @@ project('snapshot-explorer', ['c', 'vala'],
 )
 
 application_id = 'org.github.atheriel.snapshot-explorer'
+project_website = 'https://github.com/atheriel/snapshot-explorer'
+issue_url = project_website + '/issues'
 
 vapi_dir = meson.current_source_dir() / 'vapi'
 add_project_arguments(['--vapidir', vapi_dir, '--enable-experimental-non-null'],
@@ -21,17 +23,25 @@ add_project_arguments(
   '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()), language: 'c'
 )
 
+# Quoted configuration data, for C header files.
 conf = configuration_data()
 conf.set_quoted('APP_ID', application_id)
 conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('PROJECT_WEBSITE', 'https://github.com/atheriel/snapshot-explorer')
-conf.set_quoted('ISSUE_URL', 'https://github.com/atheriel/snapshot-explorer/issues')
+conf.set_quoted('PROJECT_WEBSITE', project_website)
+conf.set_quoted('ISSUE_URL', issue_url)
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 config_h = configure_file(output: 'config.h', configuration: conf)
 config_dep = declare_dependency(
   sources: config_h, include_directories: include_directories('.')
 )
+
+# Unquoted configuration data.
+data_conf = configuration_data()
+data_conf.set('APP_ID', application_id)
+data_conf.set('VERSION', meson.project_version())
+data_conf.set('PROJECT_WEBSITE', project_website)
+data_conf.set('ISSUE_URL', issue_url)
 
 subdir('data')
 subdir('src')

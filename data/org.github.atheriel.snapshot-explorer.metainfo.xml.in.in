@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>@APP_ID@</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>LGPL-2.1-or-later AND GPL-3.0-or-later</project_license>
+	<name>Snapshot Explorer</name>
+	<summary>Browse local ZFS snapshots using the system file manager</summary>
+	<description>
+		<p>
+			Snapshot Explorer lists the ZFS snapshots that contain a given
+			folder, so that previous versions of your files can be opened in
+			the system file manager.
+		</p>
+	</description>
+	<launchable type="desktop-id">@APP_ID@.desktop</launchable>
+	<url type="homepage">@PROJECT_WEBSITE@</url>
+	<url type="bugtracker">@ISSUE_URL@</url>
+	<developer id="org.github.atheriel">
+		<name translatable="no">Aaron Jacobs</name>
+	</developer>
+	<content_rating type="oars-1.1"/>
+	<releases>
+		<release version="0.1.0" date="2021-11-16" type="development"/>
+	</releases>
+</component>

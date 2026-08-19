@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-19 00:04-0400\n"
+"POT-Creation-Date: 2026-08-19 09:52-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/org.github.atheriel.snapshot-explorer.desktop.in:3 src/window.ui:15
-#: src/window.vala:110
+#: data/org.github.atheriel.snapshot-explorer.desktop.in:3
+#: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:6
+#: src/window.ui:15 src/window.vala:110
 msgid "Snapshot Explorer"
 msgstr ""
 
 #: data/org.github.atheriel.snapshot-explorer.desktop.in:4
+#: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:7
+#: src/window.vala:113
 msgid "Browse local ZFS snapshots using the system file manager"
 msgstr ""
 
-#: data/org.github.atheriel.snapshot-explorer.appdata.xml.in:6
-msgid "Browse local ZFS snapshots"
+#: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:9
+msgid ""
+"Snapshot Explorer lists the ZFS snapshots that contain a given folder, so "
+"that previous versions of your files can be opened in the system file "
+"manager."
 msgstr ""
 
 #: nautilus/extension.vala:56
@@ -180,10 +186,6 @@ msgstr ""
 
 #: src/window.vala:87
 msgid "Refreshed folders."
-msgstr ""
-
-#: src/window.vala:113
-msgid "Browse local ZFS snapshots using the system file manager."
 msgstr ""
 
 #. Translators: replace this with your name(s), one per line, to

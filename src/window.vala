@@ -110,7 +110,7 @@ namespace SnapshotExplorer {
 				application_name = _("Snapshot Explorer"),
 				application_icon = Config.APP_ID,
 				version = Config.VERSION,
-				comments = _("Browse local ZFS snapshots using the system file manager."),
+				comments = _("Browse local ZFS snapshots using the system file manager"),
 				developer_name = "Aaron Jacobs",
 				copyright = "© 2021–2026 Aaron Jacobs",
 				license_type = Gtk.License.GPL_3_0,

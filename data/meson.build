@@ -14,12 +14,18 @@ if desktop_utils.found()
   )
 endif
 
+metainfo_file = configure_file(
+  input: ('@0@.metainfo.xml.in.in').format(application_id),
+  output: ('@0@.metainfo.xml.in').format(application_id),
+  configuration: data_conf
+)
+
 appstream_file = i18n.merge_file(
-  input: 'org.github.atheriel.snapshot-explorer.appdata.xml.in',
-  output: 'org.github.atheriel.snapshot-explorer.appdata.xml',
+  input: metainfo_file,
+  output: ('@0@.metainfo.xml').format(application_id),
   po_dir: '../po',
   install: true,
-  install_dir: join_paths(get_option('datadir'), 'appdata')
+  install_dir: join_paths(get_option('datadir'), 'metainfo')
 )
 
 appstream_util = find_program('appstream-util', required: false)
