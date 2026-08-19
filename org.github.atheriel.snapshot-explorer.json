@@ -1,12 +1,12 @@
 {
     "app-id" : "org.github.atheriel.snapshot-explorer",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "41",
+    "runtime-version" : "50",
     "sdk" : "org.gnome.Sdk",
     "command" : "snapshot-explorer",
     "finish-args" : [
-        "--share=network",
         "--share=ipc",
+        "--device=dri",
         "--socket=fallback-x11",
         "--socket=wayland",
         "--filesystem=host:ro",
@@ -29,14 +29,16 @@
         {
             "name" : "snapshot-explorer",
             "config-opts": [
-                "-Dflatpak=true"
+                "-Dflatpak=true",
+                "-Denable-nautilus-extension=false"
             ],
             "builddir" : true,
             "buildsystem" : "meson",
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "."
+                    "url" : ".",
+                    "branch" : "main"
                 }
             ]
         }

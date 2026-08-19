@@ -64,3 +64,15 @@ execute `snapshot-explorer`:
 
     sudo ninja install
     snapshot-explorer
+
+### Flatpak
+
+A Flatpak manifest is included. Building it requires `flatpak-builder`, which is
+itself available as a Flatpak:
+
+    flatpak install flathub org.flatpak.Builder
+    flatpak run org.flatpak.Builder --force-clean --user --install \
+        build-flatpak org.github.atheriel.snapshot-explorer.json
+    flatpak run org.github.atheriel.snapshot-explorer
+
+Note that the Nautilus extension cannot run under Flatpak.
