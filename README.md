@@ -75,4 +75,7 @@ itself available as a Flatpak:
         build-flatpak org.github.atheriel.snapshot-explorer.json
     flatpak run org.github.atheriel.snapshot-explorer
 
+The manifest builds the working tree rather than a commit, so there is no need
+to commit changes before trying them out.
+
 Note that the Nautilus extension cannot run under Flatpak.

@@ -36,9 +36,15 @@
             "buildsystem" : "meson",
             "sources" : [
                 {
-                    "type" : "git",
-                    "url" : ".",
-                    "branch" : "main"
+                    "type" : "dir",
+                    "path" : ".",
+                    "skip" : [
+                        ".flatpak-builder",
+                        ".git",
+                        "_build",
+                        "build",
+                        "build-flatpak"
+                    ]
                 }
             ]
         }
