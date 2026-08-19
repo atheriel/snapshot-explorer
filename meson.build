@@ -24,6 +24,8 @@ add_project_arguments(
 conf = configuration_data()
 conf.set_quoted('APP_ID', application_id)
 conf.set_quoted('VERSION', meson.project_version())
+conf.set_quoted('PROJECT_WEBSITE', 'https://github.com/atheriel/snapshot-explorer')
+conf.set_quoted('ISSUE_URL', 'https://github.com/atheriel/snapshot-explorer/issues')
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 config_h = configure_file(output: 'config.h', configuration: conf)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-18 21:52-0400\n"
+"POT-Creation-Date: 2026-08-18 23:48-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,4 +184,17 @@ msgstr ""
 
 #: src/window.vala:113
 msgid "Browse local ZFS snapshots using the system file manager."
+msgstr ""
+
+#. Translators: replace this with your name(s), one per line, to
+#. be credited in the About dialog. It is not shown when
+#. untranslated.
+#: src/window.vala:121
+msgid "translator-credits"
+msgstr ""
+
+#. Translators: the heading of a section on the Legal page of the
+#. About dialog, covering the parts under a different licence.
+#: src/window.vala:128
+msgid "Nautilus Extension and Shared Components"
 msgstr ""

@@ -112,10 +112,24 @@ namespace SnapshotExplorer {
 				version = Config.VERSION,
 				comments = _("Browse local ZFS snapshots using the system file manager."),
 				developer_name = "Aaron Jacobs",
-				copyright = "© 2021 Aaron Jacobs",
+				copyright = "© 2021–2026 Aaron Jacobs",
 				license_type = Gtk.License.GPL_3_0,
 				developers = { "Aaron Jacobs" },
+				// Translators: replace this with your name(s), one per line, to
+				// be credited in the About dialog. It is not shown when
+				// untranslated.
+				translator_credits = _("translator-credits"),
+				website = Config.PROJECT_WEBSITE,
+				issue_url = Config.ISSUE_URL,
 			};
+			dialog.add_legal_section (
+				// Translators: the heading of a section on the Legal page of the
+				// About dialog, covering the parts under a different licence.
+				_("Nautilus Extension and Shared Components"),
+				"© 2021–2026 Aaron Jacobs",
+				Gtk.License.LGPL_2_1,
+				null
+			);
 			dialog.present (this);
 		}
 	}
