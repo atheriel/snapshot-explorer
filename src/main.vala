@@ -12,7 +12,7 @@ namespace SnapshotExplorer {
 
 		public Application () {
 			Object (
-				application_id: "org.github.atheriel.snapshot-explorer",
+				application_id: Config.APP_ID,
 				flags: ApplicationFlags.DEFAULT_FLAGS
 			);
 		}

@@ -1,12 +1,13 @@
 project('snapshot-explorer', ['c', 'vala'],
   version: '0.1.0',
-  meson_version: '>= 0.51.0',
+  meson_version: '>= 0.58.0',
   default_options: [
     'warning_level=2',
   ],
 )
 
 application_id = 'org.github.atheriel.snapshot-explorer'
+application_path = '/' + application_id.replace('.', '/') + '/'
 project_website = 'https://github.com/atheriel/snapshot-explorer'
 issue_url = project_website + '/issues'
 
@@ -39,6 +40,8 @@ config_dep = declare_dependency(
 # Unquoted configuration data.
 data_conf = configuration_data()
 data_conf.set('APP_ID', application_id)
+data_conf.set('APP_PATH', application_path)
+data_conf.set('GETTEXT_PACKAGE', meson.project_name())
 data_conf.set('VERSION', meson.project_version())
 data_conf.set('PROJECT_WEBSITE', project_website)
 data_conf.set('ISSUE_URL', issue_url)

@@ -41,14 +41,18 @@ if appstream_util.found()
   )
 endif
 
-install_data('org.github.atheriel.snapshot-explorer.gschema.xml',
+gschema_file = configure_file(
+  input: ('@0@.gschema.xml.in').format(application_id),
+  output: ('@0@.gschema.xml').format(application_id),
+  configuration: data_conf,
+  install: true,
   install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 
 compile_schemas = find_program('glib-compile-schemas', required: false)
 if compile_schemas.found()
   test('Validate schema file', compile_schemas,
-    args: ['--strict', '--dry-run', meson.current_source_dir()]
+    args: ['--strict', '--dry-run', meson.current_build_dir()]
   )
 endif
 

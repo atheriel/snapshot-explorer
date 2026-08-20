@@ -4,7 +4,7 @@
  SPDX-FileCopyrightText: Copyright 2021 Aaron Jacobs
 -->
 
-<schemalist gettext-domain="snapshot-explorer">
-	<schema id="org.github.atheriel.snapshot-explorer" path="/org/github/atheriel/snapshot-explorer/">
+<schemalist gettext-domain="@GETTEXT_PACKAGE@">
+	<schema id="@APP_ID@" path="@APP_PATH@">
 	</schema>
 </schemalist>

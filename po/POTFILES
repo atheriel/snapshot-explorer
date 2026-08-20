@@ -1,6 +1,6 @@
 data/org.github.atheriel.snapshot-explorer.desktop.in.in
 data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in
-data/org.github.atheriel.snapshot-explorer.gschema.xml
+data/org.github.atheriel.snapshot-explorer.gschema.xml.in
 nautilus/extension.vala
 src/fs.vala
 src/main.vala
