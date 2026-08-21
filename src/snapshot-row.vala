@@ -6,7 +6,7 @@
 
 [GtkTemplate (ui = "/org/github/atheriel/snapshot-explorer/snapshot-row.ui")]
 class SnapshotRow : Adw.ActionRow {
-	public unowned Fs.Snapshot entry { get; construct; }
+	public Fs.Snapshot entry { get; construct; }
 
 	[GtkChild] public unowned Gtk.Button browse;
 
