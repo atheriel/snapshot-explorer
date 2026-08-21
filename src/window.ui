@@ -151,6 +151,9 @@
                                 <property name="active" bind-source="view" bind-property="show-sidebar" bind-flags="sync-create|bidirectional"/>
                               </object>
                             </child>
+                            <child type="end">
+                              <object class="GtkBox" id="loading_container"/>
+                            </child>
                           </object>
                         </child>
                         <property name="content">

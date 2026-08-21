@@ -136,7 +136,9 @@ namespace Zfs {
 		return (owned) root;
 	}
 
-	public async List<Fs.Snapshot> snapshots_for_path (string path) {
+	public async List<Fs.Snapshot> snapshots_for_path (
+		string path, Cancellable? cancellable = null
+	) {
 		var result = new List<Fs.Snapshot> ();
 		if (!yield has_zfs_utils ()) {
 			return (owned) result;
@@ -156,12 +158,13 @@ namespace Zfs {
 				"-S", "creation", path
 			};
 		}
+		Subprocess? proc = null;
 		try {
-			var proc = new Subprocess.newv (argv, SubprocessFlags.STDOUT_PIPE);
-			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
+			proc = new Subprocess.newv (argv, SubprocessFlags.STDOUT_PIPE);
+			var stream = new DataInputStream ((!) ((!) proc).get_stdout_pipe ());
 			string? line;
 			// TODO: Handle malformed input instead of ignoring it.
-			while ((line = yield stream.read_line_async()) != null) {
+			while ((line = yield stream.read_line_async (Priority.DEFAULT, cancellable)) != null) {
 				string[] columns = ((!) line).split("\t");
 				if (columns.length != 2) {
 					continue;
@@ -182,6 +185,19 @@ namespace Zfs {
 					new DateTime.from_unix_local ((!) created)
 				));
 			}
+		} catch (IOError.CANCELLED e) {
+			if (proc != null) {
+				((!) proc).force_exit ();
+				try {
+					yield ((!) proc).wait_async ();
+				} catch (Error wait_error) {
+					warning (
+						"failed to reap cancelled snapshot lookup: %s",
+						wait_error.message
+					);
+				}
+			}
+			return (owned) result;
 		} catch (Error e) {
 			// TODO: Better error reporting.
 			print ("error: snapshots_for_path(): %s\n", e.message);

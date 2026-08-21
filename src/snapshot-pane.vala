@@ -6,11 +6,7 @@
 
 [GtkTemplate (ui = "/org/github/atheriel/snapshot-explorer/snapshot-pane.ui")]
 class SnapshotPane : Gtk.Box {
-#if ADW_HAS_SPINNER
-	public Adw.Spinner loading_indicator { get; construct set; }
-#else
-	public Gtk.Spinner loading_indicator { get; construct set; }
-#endif
+	public bool loading { get; private set; }
 
 	[GtkChild] private unowned Gtk.Stack stack;
 	[GtkChild] private unowned Adw.PreferencesGroup today_section;
@@ -24,21 +20,9 @@ class SnapshotPane : Gtk.Box {
 	[GtkChild] private unowned Gtk.ListBox earlier_this_year;
 	[GtkChild] private unowned Gtk.ListBox previous_years;
 	private FileManager1? fm = null;
+	private Cancellable? current = null;
 
 	construct {
-#if ADW_HAS_SPINNER
-		loading_indicator = new Adw.Spinner () {
-			tooltip_text = _("Loading snapshots..."),
-			visible = false,
-		};
-#else
-		loading_indicator = new Gtk.Spinner () {
-			tooltip_text = _("Loading snapshots..."),
-			spinning = false,
-			visible = false,
-		};
-#endif
-
 		start_bus.begin ();
 	}
 
@@ -47,23 +31,27 @@ class SnapshotPane : Gtk.Box {
 			return;
 		}
 
-		loading_indicator.visible = true;
-#if !ADW_HAS_SPINNER
-		loading_indicator.spinning = true;
-#endif
+		current?.cancel ();
+		var cancellable = new Cancellable ();
+		current = cancellable;
+		loading = true;
 
 		List<Fs.Snapshot> entries;
 		switch (fs_type) {
 		case Fs.Type.ZFS:
-			entries = yield Zfs.snapshots_for_path ((!) path);
+			entries = yield Zfs.snapshots_for_path ((!) path, cancellable);
 			break;
 		default:
-			show_page ("not-supported");
+			show_page ("not-supported", cancellable);
 			return;
 		}
 
 		if (entries.length () == 0) {
-			show_page ("no-snapshots");
+			show_page ("no-snapshots", cancellable);
+			return;
+		}
+
+		if (!is_current (cancellable)) {
 			return;
 		}
 
@@ -106,17 +94,20 @@ class SnapshotPane : Gtk.Box {
 			}
 		});
 
-		show_page ("snapshots");
+		show_page ("snapshots", cancellable);
 	}
 
-	private void show_page (string name) {
+	private void show_page (string name, Cancellable cancellable) {
+		if (!is_current (cancellable)) {
+			return;
+		}
 		stack.visible_child_name = name;
+		current = null;
+		loading = false;
+	}
 
-		// We're done loading at this point.
-		loading_indicator.visible = false;
-#if !ADW_HAS_SPINNER
-		loading_indicator.spinning = false;
-#endif
+	private bool is_current (Cancellable cancellable) {
+		return current == cancellable && !cancellable.is_cancelled ();
 	}
 
 	private void clear_snapshots () {

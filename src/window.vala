@@ -12,7 +12,7 @@ namespace SnapshotExplorer {
 		[GtkChild] unowned Adw.OverlaySplitView view;
 		[GtkChild] unowned Adw.ToastOverlay toast_overlay;
 		[GtkChild] unowned Gtk.Stack stack;
-		[GtkChild] new unowned Adw.HeaderBar titlebar;
+		[GtkChild] unowned Gtk.Box loading_container;
 #if ADW_HAS_SPINNER
 		[GtkChild] unowned Adw.StatusPage startup;
 #endif
@@ -59,8 +59,25 @@ namespace SnapshotExplorer {
 
 #if ADW_HAS_SPINNER
 			startup.paintable = new Adw.SpinnerPaintable (startup);
+
+			var spinner = new Adw.Spinner () {
+				tooltip_text = _("Loading..."),
+				visible = false,
+			};
+#else
+			var spinner = new Gtk.Spinner () {
+				tooltip_text = _("Loading..."),
+				spinning = false,
+				visible = false,
+			};
+			snapshots.bind_property (
+				"loading", spinner, "spinning", BindingFlags.SYNC_CREATE
+			);
 #endif
-			titlebar.pack_end (snapshots.loading_indicator);
+			snapshots.bind_property (
+				"loading", spinner, "visible", BindingFlags.SYNC_CREATE
+			);
+			loading_container.append (spinner);
 
 			refresh_folders.begin ();
 		}

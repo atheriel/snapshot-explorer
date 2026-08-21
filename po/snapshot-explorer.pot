@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-20 21:08-0400\n"
+"POT-Creation-Date: 2026-08-20 22:25-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,13 +19,13 @@ msgstr ""
 
 #: data/org.github.atheriel.snapshot-explorer.desktop.in.in:3
 #: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:6
-#: src/window.ui:15 src/window.vala:110
+#: src/window.ui:15 src/window.vala:127
 msgid "Snapshot Explorer"
 msgstr ""
 
 #: data/org.github.atheriel.snapshot-explorer.desktop.in.in:4
 #: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:7
-#: src/window.vala:113
+#: src/window.vala:130
 msgid "Browse local ZFS snapshots using the system file manager"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: src/shortcuts.ui:37 src/window.ui:180
+#: src/shortcuts.ui:37 src/window.ui:183
 msgid "Quit"
 msgstr ""
 
@@ -130,10 +130,6 @@ msgstr ""
 
 #: src/snapshot-pane.ui:111
 msgid "Previous Years"
-msgstr ""
-
-#: src/snapshot-pane.vala:31 src/snapshot-pane.vala:36
-msgid "Loading snapshots..."
 msgstr ""
 
 #: src/snapshot-row.ui:18
@@ -176,31 +172,35 @@ msgstr ""
 msgid "Show Folders"
 msgstr ""
 
-#: src/window.ui:172
+#: src/window.ui:175
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: src/window.ui:176
+#: src/window.ui:179
 msgid "About Snapshot Explorer"
 msgstr ""
 
-#: src/window.vala:75
+#: src/window.vala:64 src/window.vala:69
+msgid "Loading..."
+msgstr ""
+
+#: src/window.vala:92
 msgid "ZFS Datasets"
 msgstr ""
 
-#: src/window.vala:87
+#: src/window.vala:104
 msgid "Refreshed folders."
 msgstr ""
 
 #. Translators: replace this with your name(s), one per line, to
 #. be credited in the About dialog. It is not shown when
 #. untranslated.
-#: src/window.vala:121
+#: src/window.vala:138
 msgid "translator-credits"
 msgstr ""
 
 #. Translators: the heading of a section on the Legal page of the
 #. About dialog, covering the parts under a different licence.
-#: src/window.vala:128
+#: src/window.vala:145
 msgid "Nautilus Extension and Shared Components"
 msgstr ""
