@@ -1,4 +1,4 @@
-/* -*- mode: vala; indent-tabs-mode: nil; tab-width: 4 -*-
+/* -*- mode: vala; indent-tabs-mode: t; tab-width: 4 -*-
  *
  * SPDX-License-Identifier: LGPL-2.1-or-later
  * SPDX-FileCopyrightText: Copyright 2021 Aaron Jacobs

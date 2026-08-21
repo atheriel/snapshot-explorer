@@ -19,9 +19,9 @@ snapshot_explorer_deps = [
 ]
 
 if adwaita_dep.version().version_compare('>=1.6')
-        add_project_arguments(
-                ['-D', 'ADW_HAS_SPINNER'], language: 'vala'
-        )
+  add_project_arguments(
+    ['-D', 'ADW_HAS_SPINNER'], language: 'vala'
+  )
 endif
 
 gnome = import('gnome')
