@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-19 09:56-0400\n"
+"POT-Creation-Date: 2026-08-20 21:08-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -90,7 +90,7 @@ msgstr ""
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: src/shortcuts.ui:37 src/window.ui:179
+#: src/shortcuts.ui:37 src/window.ui:180
 msgid "Quit"
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr ""
 msgid "Browse in file manager"
 msgstr ""
 
-#: src/window.ui:41 src/window.ui:72 src/window.ui:114
+#: src/window.ui:41 src/window.ui:72 src/window.ui:115
 msgid "Menu"
 msgstr ""
 
@@ -153,30 +153,34 @@ msgid "Searching for mounted ZFS filesystems..."
 msgstr ""
 
 #: src/window.ui:80
+msgid "No Datasets"
+msgstr ""
+
+#: src/window.ui:81
 msgid "No mounted ZFS filesystems found."
 msgstr ""
 
-#: src/window.ui:101
+#: src/window.ui:102
 msgid "Folders"
 msgstr ""
 
-#: src/window.ui:107
+#: src/window.ui:108
 msgid "Refresh folder list"
 msgstr ""
 
-#: src/window.ui:142
+#: src/window.ui:143
 msgid "Snapshots"
 msgstr ""
 
-#: src/window.ui:148
+#: src/window.ui:149
 msgid "Show Folders"
 msgstr ""
 
-#: src/window.ui:171
+#: src/window.ui:172
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: src/window.ui:175
+#: src/window.ui:176
 msgid "About Snapshot Explorer"
 msgstr ""
 
