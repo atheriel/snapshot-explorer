@@ -74,23 +74,23 @@ msgstr ""
 msgid "%s at %s"
 msgstr ""
 
-#: src/shortcuts.ui:15
+#: src/gtk/help-overlay.ui:15
 msgid "All"
 msgstr ""
 
-#: src/shortcuts.ui:19
+#: src/gtk/help-overlay.ui:19
 msgid "General"
 msgstr ""
 
-#: src/shortcuts.ui:23
+#: src/gtk/help-overlay.ui:23
 msgid "Reload folders and snapshots"
 msgstr ""
 
-#: src/shortcuts.ui:30
+#: src/gtk/help-overlay.ui:30
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: src/shortcuts.ui:37 src/window.ui:183
+#: src/gtk/help-overlay.ui:37 src/window.ui:183
 msgid "Quit"
 msgstr ""
 

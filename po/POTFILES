@@ -4,7 +4,7 @@ data/org.github.atheriel.snapshot-explorer.gschema.xml.in
 nautilus/extension.vala
 src/fs.vala
 src/main.vala
-src/shortcuts.ui
+src/gtk/help-overlay.ui
 src/snapshot-pane.ui
 src/snapshot-pane.vala
 src/snapshot-row.ui

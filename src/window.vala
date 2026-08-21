@@ -21,7 +21,6 @@ namespace SnapshotExplorer {
 
 		const ActionEntry[] ACTION_ENTRIES = {
 			{ "refresh", on_refresh },
-			{ "shortcuts", on_shortcuts },
 			{ "about", on_about },
 		};
 
@@ -38,7 +37,6 @@ namespace SnapshotExplorer {
 
 			var app = (Gtk.Application) GLib.Application.get_default ();
 			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
-			app.set_accels_for_action ("win.shortcuts", {"<Control>question"});
 
 			folders.row_activated.connect((row) => {
 				var folder = FolderItem.from_row (row);
@@ -112,14 +110,6 @@ namespace SnapshotExplorer {
 			} else {
 				snapshots.set_path.begin (current_path, current_fs_type);
 			}
-		}
-
-		private void on_shortcuts () {
-			var win = (Gtk.Window) new Gtk.Builder.from_resource (
-				"/org/github/atheriel/snapshot-explorer/shortcuts.ui")
-				.get_object ("shortcuts");
-			win.transient_for = this;
-			win.present ();
 		}
 
 		private void on_about () {

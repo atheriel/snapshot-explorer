@@ -173,7 +173,7 @@
   <menu id="menu">
     <item>
       <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
-      <attribute name="action">win.shortcuts</attribute>
+      <attribute name="action">win.show-help-overlay</attribute>
     </item>
     <item>
       <attribute name="label" translatable="yes">About Snapshot Explorer</attribute>
