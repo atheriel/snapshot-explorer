@@ -14,13 +14,13 @@ namespace Fs {
 
 	public class Snapshot {
 		public string name;
-		public string path;
+		public string uri;
 		public DateTime created;
 		private Timestamp? _timestamp = null;
 
-		public Snapshot (string name, string path, DateTime created) {
+		public Snapshot (string name, string uri, DateTime created) {
 			this.name = name;
-			this.path = path;
+			this.uri = uri;
 			this.created = created;
 		}
 

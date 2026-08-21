@@ -75,7 +75,7 @@ class SnapshotPane : Gtk.Box {
 			if (fm != null) {
 				row.browse.clicked.connect(() => {
 					try {
-						((!) fm).show_folders({ entry.path }, "");
+						((!) fm).show_folders({ entry.uri }, "");
 					} catch (Error e) {
 					// TODO: Better error handling/reporting.
 						print ("failed to connect to dbus: %s", e.message);
