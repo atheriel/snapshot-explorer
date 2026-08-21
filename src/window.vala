@@ -200,7 +200,11 @@ namespace SnapshotExplorer {
 		}
 
 		protected FolderItem.from_node (Node<string> item, Fs.Type t, string parent = "") {
-			this.label = item.data.replace(parent, "");
+			if (item.data.has_prefix (parent)) {
+				this.label = item.data.substring (parent.length);
+			} else {
+				this.label = item.data;
+			}
 			this.path = item.data;
 			this.type = t;
 			this.heading = false;
