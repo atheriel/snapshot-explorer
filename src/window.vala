@@ -128,6 +128,10 @@ namespace SnapshotExplorer {
 				translator_credits = _("translator-credits"),
 				website = Config.PROJECT_WEBSITE,
 				issue_url = Config.ISSUE_URL,
+				// Directly embed the most recent release notes. These are not
+				// marked translatable, for now.
+				release_notes_version = "0.2.0",
+				release_notes = "<p>Snapshot Explorer is now built with libadwaita and GTK 4.</p>",
 			};
 			dialog.add_legal_section (
 				// Translators: the heading of a section on the Legal page of the
