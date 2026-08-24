@@ -16,8 +16,6 @@ namespace SnapshotExplorer {
 #if ADW_HAS_SPINNER
 		[GtkChild] unowned Adw.StatusPage startup;
 #endif
-		string? current_path;
-		Fs.Type current_fs_type = Fs.Type.UNKNOWN;
 
 		const ActionEntry[] ACTION_ENTRIES = {
 			{ "refresh", on_refresh },
@@ -43,9 +41,7 @@ namespace SnapshotExplorer {
 				if (view.collapsed) {
 					view.show_sidebar = false;
 				}
-				current_path = folder.path.dup ();
-				current_fs_type = folder.type;
-				snapshots.set_path.begin (current_path, current_fs_type);
+				snapshots.set_path.begin (folder.path, folder.type);
 			});
 
 			// Make sure the sidebar is visible if there is room for it.
@@ -117,7 +113,7 @@ namespace SnapshotExplorer {
 			if (!view.collapsed || view.show_sidebar) {
 				refresh_folders.begin ();
 			} else {
-				snapshots.set_path.begin (current_path, current_fs_type);
+				snapshots.refresh.begin ();
 			}
 		}
 

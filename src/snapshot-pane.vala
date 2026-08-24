@@ -21,6 +21,8 @@ class SnapshotPane : Gtk.Box {
 	[GtkChild] private unowned Gtk.ListBox previous_years;
 	private FileManager1? fm = null;
 	private Cancellable? current = null;
+	private string? path = null;
+	private Fs.Type fs_type = Fs.Type.UNKNOWN;
 
 	public signal void error_occurred (Error error);
 
@@ -29,6 +31,12 @@ class SnapshotPane : Gtk.Box {
 	}
 
 	public async void set_path (string? path, Fs.Type fs_type) {
+		this.path = path?.dup ();
+		this.fs_type = fs_type;
+		yield refresh ();
+	}
+
+	public async void refresh () {
 		if (path == null) {
 			return;
 		}
