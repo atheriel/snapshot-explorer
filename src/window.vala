@@ -16,6 +16,8 @@ namespace SnapshotExplorer {
 #if ADW_HAS_SPINNER
 		[GtkChild] unowned Adw.StatusPage startup;
 #endif
+		GLib.ListStore folder_store;
+		Node<string>? dataset_nodes;
 
 		const ActionEntry[] ACTION_ENTRIES = {
 			{ "refresh", on_refresh },
@@ -36,7 +38,15 @@ namespace SnapshotExplorer {
 			var app = (Gtk.Application) GLib.Application.get_default ();
 			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
 
-			folders.row_activated.connect((row) => {
+			folder_store = new GLib.ListStore (typeof(FolderItem));
+			folders.bind_model (
+				new Gtk.TreeListModel (
+					folder_store, false, false, FolderItem.child_models
+				),
+				FolderItem.create_row_widget
+			);
+
+			folders.row_activated.connect ((row) => {
 				var folder = FolderItem.from_row (row);
 				if (view.collapsed) {
 					view.show_sidebar = false;
@@ -82,22 +92,22 @@ namespace SnapshotExplorer {
 		}
 
 		private async void refresh_folders () {
-			Node<string> zroot;
+			dataset_nodes = null;
 			try {
-				zroot = yield Zfs.mountpoint_tree ();
+				dataset_nodes = yield Zfs.mountpoint_tree ();
 			} catch (Error e) {
-				stack.visible_child_name = "no-datasets";
 				warning ("%s", e.message);
 				toast_overlay.add_toast (new Adw.Toast (e.message));
+			}
+			folder_store.remove_all ();
+			FolderItem.maybe_add_section (
+				folder_store, dataset_nodes, _("ZFS Datasets"), Fs.Type.ZFS
+			);
+
+			if (folder_store.n_items == 0) {
+				stack.visible_child_name = "no-datasets";
 				return;
 			}
-			var store = new GLib.ListStore (typeof(FolderItem));
-			FolderItem.maybe_add_section (store, zroot, _("ZFS Datasets"),
-										  Fs.Type.ZFS);
-			folders.bind_model (
-				new Gtk.TreeListModel (store, false, false, FolderItem.child_models),
-				FolderItem.create_row_widget
-			);
 
 			if (stack.visible_child_name != "main") {
 				stack.visible_child_name = "main";
