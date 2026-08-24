@@ -5,9 +5,9 @@
  */
 
 namespace Zfs {
-	public async Node<string>? mountpoint_tree () {
+	public async Node<string> mountpoint_tree () throws Error {
 		if (!yield has_zfs_utils ()) {
-			return null;
+			throw no_zfs_utils_error ();
 		}
 		if (Environment.get_variable("SNAPSHOT_EXPLORER_DEBUG_LATENCY") == "1") {
 			yield nap(2000);
@@ -27,29 +27,31 @@ namespace Zfs {
 		}
 		var mountpoints = new List<string> ();
 		try {
-			var proc = new Subprocess.newv (argv, SubprocessFlags.STDOUT_PIPE);
-			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
-			string? line;
-			while ((line = yield stream.read_line_async()) != null) {
-				string[] columns = ((!) line).split("\t");
+			var code = yield exec_and_stream (argv, null, (line) => {
+				string[] columns = line.split("\t");
 				if (columns.length != 3) {
-					continue;
+					throw malformed_output_error ("zfs list");
 				}
 				if (columns[0].ascii_casecmp ("none") == 0) {
-					continue;
+					return;
 				}
 				if (columns[1].ascii_casecmp ("off") == 0) {
-					continue;
+					return;
 				}
 				if (columns[2].ascii_casecmp ("no") == 0) {
-					continue;
+					return;
 				}
 				mountpoints.append (columns[0]);
+			});
+			if (code != 0) {
+				throw command_failed_error ("zfs list", code);
 			}
+		} catch (IOError e) {
+			throw e;
 		} catch (Error e) {
-			// TODO: Better error reporting.
-			print ("error: mountpoint_tree(): %s\n", e.message);
-			return null;
+			throw new IOError.FAILED (
+				_("Failed to list mounted ZFS filesystems: %s").printf (e.message)
+			);
 		}
 
 		return tree_from_list ((owned) mountpoints);
@@ -138,10 +140,10 @@ namespace Zfs {
 
 	public async List<Fs.Snapshot> snapshots_for_path (
 		string path, Cancellable? cancellable = null
-	) {
+	) throws Error {
 		var result = new List<Fs.Snapshot> ();
 		if (!yield has_zfs_utils ()) {
-			return (owned) result;
+			throw no_zfs_utils_error ();
 		}
 		if (Environment.get_variable("SNAPSHOT_EXPLORER_DEBUG_LATENCY") == "1") {
 			yield nap(2000);
@@ -158,24 +160,19 @@ namespace Zfs {
 				"-S", "creation", path
 			};
 		}
-		Subprocess? proc = null;
 		try {
-			proc = new Subprocess.newv (argv, SubprocessFlags.STDOUT_PIPE);
-			var stream = new DataInputStream ((!) ((!) proc).get_stdout_pipe ());
-			string? line;
-			// TODO: Handle malformed input instead of ignoring it.
-			while ((line = yield stream.read_line_async (Priority.DEFAULT, cancellable)) != null) {
-				string[] columns = ((!) line).split("\t");
+			var code = yield exec_and_stream (argv, cancellable, (line) => {
+				string[] columns = line.split("\t");
 				if (columns.length != 2) {
-					continue;
+					throw malformed_output_error ("zfs list");
 				}
 				string[] name = columns[0].split("@");
 				if (name.length != 2) {
-					continue;
+					throw malformed_output_error ("zfs list");
 				}
 				int64? created;
 				if (!int64.try_parse (columns[1], out created)) {
-					continue;
+					throw malformed_output_error ("zfs list");
 				}
 				result.append (new Fs.Snapshot (
 					name[1],
@@ -184,26 +181,63 @@ namespace Zfs {
 					),
 					new DateTime.from_unix_local ((!) created)
 				));
+			});
+			if (code != 0) {
+				throw command_failed_error ("zfs list", code);
 			}
-		} catch (IOError.CANCELLED e) {
-			if (proc != null) {
-				((!) proc).force_exit ();
-				try {
-					yield ((!) proc).wait_async ();
-				} catch (Error wait_error) {
-					warning (
-						"failed to reap cancelled snapshot lookup: %s",
-						wait_error.message
-					);
-				}
-			}
-			return (owned) result;
+		} catch (IOError e) {
+			throw e;
 		} catch (Error e) {
-			// TODO: Better error reporting.
-			print ("error: snapshots_for_path(): %s\n", e.message);
-			return (owned) result;
+			throw new IOError.FAILED (
+				_("Failed to query ZFS snapshots: %s").printf (e.message)
+			);
 		}
 		return (owned) result;
+	}
+
+	private static Error no_zfs_utils_error () {
+		return new IOError.FAILED (_("No ZFS CLI available."));
+	}
+
+	private static Error malformed_output_error (string cmd) {
+		return new IOError.FAILED (
+			_("Unexpected or malformed '%s' output.").printf (cmd)
+		);
+	}
+
+	private static Error command_failed_error (string cmd, int exit_status) {
+		return new IOError.FAILED (
+			_("'%s' failed with status %d.").printf (cmd, exit_status)
+		);
+	}
+
+	private delegate void LineHandler (string line) throws Error;
+
+	private static async int exec_and_stream (
+		string[] argv,
+		Cancellable? cancellable,
+		LineHandler handler
+	) throws Error {
+		var proc = new Subprocess.newv (
+			argv, SubprocessFlags.STDOUT_PIPE | SubprocessFlags.STDERR_SILENCE
+		);
+		try {
+			var stream = new DataInputStream ((!) proc.get_stdout_pipe ());
+			string? line;
+			while ((line = yield stream.read_line_async (Priority.DEFAULT, cancellable)) != null) {
+				handler ((!) line);
+			}
+			yield proc.wait_async ();
+			return proc.get_exit_status ();
+		} catch (Error e) {
+			proc.force_exit ();
+			try {
+				yield proc.wait_async ();
+			} catch (Error wait_error) {
+				warning ("Failed to reap child process: %s", wait_error.message);
+			}
+			throw e;
+		}
 	}
 
 	static bool? _has_zfs_utils = null;

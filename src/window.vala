@@ -77,13 +77,22 @@ namespace SnapshotExplorer {
 			);
 			loading_container.append (spinner);
 
+			snapshots.error_occurred.connect ((e) => {
+				warning ("%s", e.message);
+				toast_overlay.add_toast (new Adw.Toast (e.message));
+			});
+
 			refresh_folders.begin ();
 		}
 
 		private async void refresh_folders () {
-			var zroot = yield Zfs.mountpoint_tree ();
-			if (zroot == null) {
+			Node<string> zroot;
+			try {
+				zroot = yield Zfs.mountpoint_tree ();
+			} catch (Error e) {
 				stack.visible_child_name = "no-datasets";
+				warning ("%s", e.message);
+				toast_overlay.add_toast (new Adw.Toast (e.message));
 				return;
 			}
 			var store = new GLib.ListStore (typeof(FolderItem));

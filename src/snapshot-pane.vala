@@ -22,6 +22,8 @@ class SnapshotPane : Gtk.Box {
 	private FileManager1? fm = null;
 	private Cancellable? current = null;
 
+	public signal void error_occurred (Error error);
+
 	construct {
 		start_bus.begin ();
 	}
@@ -37,12 +39,20 @@ class SnapshotPane : Gtk.Box {
 		loading = true;
 
 		List<Fs.Snapshot> entries;
-		switch (fs_type) {
-		case Fs.Type.ZFS:
-			entries = yield Zfs.snapshots_for_path ((!) path, cancellable);
-			break;
-		default:
-			show_page ("not-supported", cancellable);
+		try {
+			switch (fs_type) {
+			case Fs.Type.ZFS:
+				entries = yield Zfs.snapshots_for_path ((!) path, cancellable);
+				break;
+			default:
+				show_page ("not-supported", cancellable);
+				return;
+			}
+		} catch (IOError.CANCELLED e) {
+			return;
+		} catch (Error e) {
+			error_occurred (e);
+			show_page ("error", cancellable);
 			return;
 		}
 
@@ -65,8 +75,7 @@ class SnapshotPane : Gtk.Box {
 					try {
 						((!) fm).show_folders({ entry.uri }, "");
 					} catch (Error e) {
-					// TODO: Better error handling/reporting.
-						print ("failed to connect to dbus: %s", e.message);
+						error_occurred (e);
 					};
 				});
 			}
