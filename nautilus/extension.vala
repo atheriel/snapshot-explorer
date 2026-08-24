@@ -7,7 +7,7 @@
 class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 	private Gtk.InfoBar bar;
 	private Gtk.Label label;
-	private Cancellable cancellable;
+	private Cancellable? current;
 	private Fs.Snapshot? snapshot;
 
 	construct {
@@ -20,27 +20,38 @@ class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 		bar = new Gtk.InfoBar ();
 		var container = bar.get_content_area ();
 		container.add (label);
-		cancellable = new Cancellable ();
 	}
 
 	public unowned Gtk.Widget? get_widget (string uri, Gtk.Widget window) {
 		if (!uri.contains ("file://") || !is_snapshot_path (uri)) {
 			return null;
 		}
-		var current = current_uri_from_snapshot (uri).replace ("file://", "");
-		cancellable.cancel ();
-		cancellable.reset ();
-		fetch_snapshot_metadata.begin (current, snapshot_name_from_uri (uri));
+		var path = current_uri_from_snapshot (uri).replace ("file://", "");
+		current?.cancel ();
+		var cancellable = new Cancellable ();
+		current = cancellable;
+		fetch_snapshot_metadata.begin (
+			path, snapshot_name_from_uri (uri), cancellable
+		);
 		return bar;
 	}
 
-	private async void fetch_snapshot_metadata (string path, string? name) {
-		bool cancelled = false;
-		cancellable.cancelled.connect (() => {
-			cancelled = true;
-		});
-		var snapshots = yield Zfs.snapshots_for_path (path);
-		if (cancelled) {
+	private async void fetch_snapshot_metadata (
+		string path, string? name, Cancellable cancellable
+	) {
+		List<Fs.Snapshot> snapshots;
+		try {
+			snapshots = yield Zfs.snapshots_for_path (path, cancellable);
+		} catch (IOError.CANCELLED e) {
+			return;
+		} catch (Error e) {
+			if (!is_current (cancellable)) {
+				return;
+			}
+			warning ("Failed to query ZFS snapshots: %s", e.message);
+			return;
+		}
+		if (!is_current (cancellable)) {
 			return;
 		}
 		snapshot = null;
@@ -57,6 +68,10 @@ class SnapshotLocationWidgetProvider : Nautilus.LocationWidgetProvider, Object {
 			path, ((!) snapshot).timestamp ().display
 		);
 		bar.show_all ();
+	}
+
+	private bool is_current (Cancellable cancellable) {
+		return current == cancellable && !cancellable.is_cancelled ();
 	}
 }
 
