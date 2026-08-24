@@ -118,6 +118,28 @@
                             </child>
                           </object>
                         </child>
+                        <child type="bottom">
+                          <object class="GtkBox">
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="hexpand">1</property>
+                                <property name="action-name">win.open-folder</property>
+                                <property name="tooltip-text" translatable="yes">Explore snapshots for any folder</property>
+                                <property name="child">
+                                  <object class="AdwButtonContent">
+                                    <property name="icon-name">folder-open-symbolic</property>
+                                    <property name="label" translatable="yes">Open Folder…</property>
+                                    <property name="halign">center</property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                         <property name="content">
                           <object class="GtkScrolledWindow">
                             <property name="hscrollbar-policy">never</property>
@@ -171,6 +193,10 @@
     </property>
   </template>
   <menu id="menu">
+    <item>
+      <attribute name="label" translatable="yes">Open Folder…</attribute>
+      <attribute name="action">win.open-folder</attribute>
+    </item>
     <item>
       <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
       <attribute name="action">win.show-help-overlay</attribute>

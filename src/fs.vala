@@ -5,6 +5,10 @@
  */
 
 namespace Fs {
+	public errordomain Error {
+		NOT_SUPPORTED,
+	}
+
 	public enum Type {
 		BTRFS,
 		ZFS,

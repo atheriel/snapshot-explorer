@@ -148,6 +148,17 @@ namespace Zfs {
 		if (Environment.get_variable("SNAPSHOT_EXPLORER_DEBUG_LATENCY") == "1") {
 			yield nap(2000);
 		}
+		string mountpoint = yield find_mountpoint (path, cancellable);
+		string relpath = "";
+		if (mountpoint == "/") {
+			if (path.has_prefix ("/")) {
+				relpath = path.substring (1);
+			} else {
+				relpath = path;
+			}
+		} else if (path.has_prefix (mountpoint + "/")) {
+			relpath = path.substring (mountpoint.length + 1);
+		}
 		string[] argv;
 		if (sandboxed ()) {
 			argv = {
@@ -176,9 +187,11 @@ namespace Zfs {
 				}
 				result.append (new Fs.Snapshot (
 					name[1],
-					Path.build_filename (
-						"file://", path, ".zfs/snapshot", name[1]
-					),
+					File.new_for_path (
+						Path.build_filename (
+							mountpoint, ".zfs", "snapshot", name[1], relpath
+						)
+					).get_uri (),
 					new DateTime.from_unix_local ((!) created)
 				));
 			});
@@ -195,6 +208,46 @@ namespace Zfs {
 		return (owned) result;
 	}
 
+	private static async string find_mountpoint (
+		string path, Cancellable? cancellable
+	) throws Error {
+		string[] argv;
+		if (sandboxed ()) {
+			argv = {
+				"flatpak-spawn", "--host", "zfs", "list", "-Hp", "-o",
+				"mountpoint", path
+			};
+		} else {
+			argv = { "zfs", "list", "-Hp", "-o", "mountpoint", path };
+		}
+		string? mountpoint = null;
+		try {
+			var code = yield exec_and_stream (argv, cancellable, (line) => {
+				if (mountpoint == null) {
+					mountpoint = line.dup ();
+				}
+			});
+			if (code != 0 || mountpoint == null) {
+				throw unsupported_path_error ();
+			}
+			mountpoint = mountpoint?.strip ();
+			if (mountpoint == "" || mountpoint == "none" ||
+				mountpoint == "legacy" || mountpoint == "-") {
+				throw unsupported_path_error ();
+			}
+			return (!) mountpoint;
+		} catch (IOError.CANCELLED e) {
+			throw e;
+		} catch (Fs.Error e) {
+			throw e;
+		} catch (Error e) {
+			throw new IOError.FAILED (
+				_("Failed to determine ZFS mountpoint containing \"%s\": %s").
+				printf (path, e.message)
+			);
+		}
+	}
+
 	private static Error no_zfs_utils_error () {
 		return new IOError.FAILED (_("No ZFS CLI available."));
 	}
@@ -209,6 +262,10 @@ namespace Zfs {
 		return new IOError.FAILED (
 			_("'%s' failed with status %d.").printf (cmd, exit_status)
 		);
+	}
+
+	private static Error unsupported_path_error () {
+		return new Fs.Error.NOT_SUPPORTED (_("Not a ZFS filesystem."));
 	}
 
 	private delegate void LineHandler (string line) throws Error;

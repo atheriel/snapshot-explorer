@@ -52,11 +52,20 @@ class SnapshotPane : Gtk.Box {
 			case Fs.Type.ZFS:
 				entries = yield Zfs.snapshots_for_path ((!) path, cancellable);
 				break;
+			case Fs.Type.UNKNOWN:
+				// Assume that an unknown filesystem might be ZFS. This will
+				// throw Fs.Error.NOT_SUPPORTED if it is not, which is caught
+				// below.
+				entries = yield Zfs.snapshots_for_path ((!) path, cancellable);
+				break;
 			default:
 				show_page ("not-supported", cancellable);
 				return;
 			}
 		} catch (IOError.CANCELLED e) {
+			return;
+		} catch (Fs.Error.NOT_SUPPORTED e) {
+			show_page ("not-supported", cancellable);
 			return;
 		} catch (Error e) {
 			error_occurred (e);

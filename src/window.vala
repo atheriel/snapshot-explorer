@@ -18,8 +18,10 @@ namespace SnapshotExplorer {
 #endif
 		GLib.ListStore folder_store;
 		Node<string>? dataset_nodes;
+		Node<string>? other_nodes;
 
 		const ActionEntry[] ACTION_ENTRIES = {
+			{ "open-folder", on_open_folder },
 			{ "refresh", on_refresh },
 			{ "about", on_about },
 		};
@@ -36,6 +38,7 @@ namespace SnapshotExplorer {
 			add_action_entries (ACTION_ENTRIES, this);
 
 			var app = (Gtk.Application) GLib.Application.get_default ();
+			app.set_accels_for_action ("win.open-folder", {"<Control>o"});
 			app.set_accels_for_action ("win.refresh", {"<Control>r", "F5"});
 
 			folder_store = new GLib.ListStore (typeof(FolderItem));
@@ -48,10 +51,11 @@ namespace SnapshotExplorer {
 
 			folders.row_activated.connect ((row) => {
 				var folder = FolderItem.from_row (row);
-				if (view.collapsed) {
-					view.show_sidebar = false;
+				// Clicking on a ZFS row drops the Other section, if it exists.
+				if (folder.type != Fs.Type.UNKNOWN) {
+					remove_other_folder ();
 				}
-				snapshots.set_path.begin (folder.path, folder.type);
+				show_snapshots (folder.path, folder.type);
 			});
 
 			// Make sure the sidebar is visible if there is room for it.
@@ -93,8 +97,10 @@ namespace SnapshotExplorer {
 
 		private async void refresh_folders () {
 			dataset_nodes = null;
+			bool refreshed = false;
 			try {
 				dataset_nodes = yield Zfs.mountpoint_tree ();
+				refreshed = true;
 			} catch (Error e) {
 				warning ("%s", e.message);
 				toast_overlay.add_toast (new Adw.Toast (e.message));
@@ -103,6 +109,7 @@ namespace SnapshotExplorer {
 			FolderItem.maybe_add_section (
 				folder_store, dataset_nodes, _("ZFS Datasets"), Fs.Type.ZFS
 			);
+			maybe_add_other_folder ();
 
 			if (folder_store.n_items == 0) {
 				stack.visible_child_name = "no-datasets";
@@ -114,9 +121,118 @@ namespace SnapshotExplorer {
 				return;
 			}
 
+			if (!refreshed) {
+				return;
+			}
+
 			toast_overlay.add_toast (new Adw.Toast (_("Refreshed folders.")) {
 				timeout = 2,
 			});
+		}
+
+		private void show_snapshots (string path, Fs.Type type) {
+			if (view.collapsed) {
+				view.show_sidebar = false;
+			}
+			snapshots.set_path.begin (path, type);
+		}
+
+		private void maybe_add_other_folder () {
+			FolderItem.maybe_add_section (
+				folder_store, other_nodes, _("Other"), Fs.Type.UNKNOWN
+			);
+		}
+
+		private void remove_other_folder () {
+			if (other_nodes == null) {
+				return;
+			}
+			folder_store.remove (folder_store.n_items - 1);
+			folder_store.remove (folder_store.n_items - 1);
+			other_nodes = null;
+		}
+
+		private void on_open_folder () {
+			choose_folder.begin ();
+		}
+
+		private async void choose_folder () {
+			var dialog = new Gtk.FileDialog () {
+				title = _("Open Folder"),
+				modal = true,
+			};
+			try {
+				var folder = yield dialog.select_folder (this, null);
+				var path = folder?.get_path ();
+				if (path != null) {
+					navigate_to ((!) path);
+				}
+			} catch (Gtk.DialogError.DISMISSED e) {
+				return;
+			} catch (Error e) {
+				toast_overlay.add_toast (
+					new Adw.Toast (_("Could not open the selected folder."))
+				);
+				warning ("Failed to open folder: %s", e.message);
+			}
+		}
+
+		private void navigate_to (string path) {
+			remove_other_folder ();
+			bool is_dataset = is_dataset (path);
+			if (!is_dataset) {
+				other_nodes = new Node<string> ("<root>");
+				other_nodes?.append (new Node<string> (path));
+				maybe_add_other_folder ();
+			}
+
+			show_snapshots (path, is_dataset ? Fs.Type.ZFS : Fs.Type.UNKNOWN);
+			stack.visible_child_name = "main";
+
+			// Ensure that the entry is selected and any ancestors are expanded.
+			bool expanded = false;
+			do {
+				expanded = false;
+				for (int i = 0; ; i++) {
+					var row = folders.get_row_at_index (i);
+					if (row == null) {
+						return;
+					}
+					if (!(((!) row).child is Gtk.TreeExpander)) {
+						continue;
+					}
+					var expander = (Gtk.TreeExpander) ((!) row).child;
+					var folder = FolderItem.from_row ((!) row);
+					if (folder.path == path) {
+						folders.select_row ((!) row);
+						return;
+					}
+					if (folder.type != Fs.Type.ZFS ||
+						!is_path_below (folder.path, path) ||
+						expander.list_row.expanded) {
+						continue;
+					}
+					expander.list_row.expanded = true;
+					expanded = true;
+					break;
+				}
+			} while (expanded);
+		}
+
+		private bool is_dataset (string path) {
+			var found = false;
+			dataset_nodes?.traverse (
+				TraverseType.PRE_ORDER, TraverseFlags.ALL, -1, (node) => {
+					found = node.data == path;
+					return found;
+				}
+			);
+			return found;
+		}
+
+		private static bool is_path_below (string parent, string path) {
+			return parent == "/" ? path.has_prefix ("/") :
+				path == parent || path.has_prefix (parent + "/");
 		}
 
 		private void on_refresh () {
@@ -169,7 +285,7 @@ namespace SnapshotExplorer {
 
 		public static void maybe_add_section (GLib.ListStore store, Node<string>? root, string heading, Fs.Type t) {
 			assert (store.item_type == typeof(FolderItem));
-			if (root == null) {
+			if (root == null || ((!) root).n_children () == 0) {
 				return;
 			}
 			store.append (new FolderItem.header (heading));

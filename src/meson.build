@@ -14,7 +14,7 @@ adwaita_dep = dependency('libadwaita-1', version: '>=1.5')
 snapshot_explorer_deps = [
   config_dep,
   dependency('gio-2.0', version: '>= 2.50'),
-  dependency('gtk4', version: '>= 4.0'),
+  dependency('gtk4', version: '>= 4.10'),
   adwaita_dep
 ]
 
