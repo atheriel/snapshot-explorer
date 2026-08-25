@@ -103,33 +103,18 @@
                                 <property name="title" translatable="yes">Folders</property>
                               </object>
                             </property>
+                            <child type="start">
+                              <object class="GtkButton">
+                                <property name="icon-name">folder-open-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Open Folder…</property>
+                                <property name="action-name">win.open-folder</property>
+                              </object>
+                            </child>
                             <child type="end">
                               <object class="GtkMenuButton" id="sidebar_menu_button">
                                 <property name="icon-name">open-menu-symbolic</property>
                                 <property name="tooltip-text" translatable="yes">Menu</property>
                                 <property name="menu-model">menu</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="bottom">
-                          <object class="GtkBox">
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <child>
-                              <object class="GtkButton">
-                                <property name="hexpand">1</property>
-                                <property name="action-name">win.open-folder</property>
-                                <property name="tooltip-text" translatable="yes">Explore snapshots for any folder</property>
-                                <property name="child">
-                                  <object class="AdwButtonContent">
-                                    <property name="icon-name">folder-open-symbolic</property>
-                                    <property name="label" translatable="yes">Open Folder…</property>
-                                    <property name="halign">center</property>
-                                  </object>
-                                </property>
                               </object>
                             </child>
                           </object>
