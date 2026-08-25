@@ -141,7 +141,7 @@ namespace SnapshotExplorer {
 				return;
 			}
 
-			toast_overlay.add_toast (new Adw.Toast (_("Refreshed folders.")) {
+			toast_overlay.add_toast (new Adw.Toast (_("Refreshed mounted ZFS datasets.")) {
 				timeout = 2,
 			});
 		}
