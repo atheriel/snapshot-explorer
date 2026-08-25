@@ -13,11 +13,17 @@
       <class name="property"/>
     </style>
     <child type="suffix">
-      <object class="GtkButton" id="browse">
-        <property name="icon-name">folder-symbolic</property>
-        <property name="tooltip-text" translatable="yes">Browse in file manager</property>
-        <property name="margin_top">6</property>
-        <property name="margin_bottom">6</property>
+      <object class="GtkBox">
+        <property name="name">snapshot-actions</property>
+        <style>
+          <class name="linked"/>
+        </style>
+        <child>
+          <object class="GtkButton" id="browse">
+            <property name="icon-name">folder-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Browse in file manager</property>
+          </object>
+        </child>
       </object>
     </child>
   </template>
