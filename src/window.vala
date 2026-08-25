@@ -287,8 +287,18 @@ namespace SnapshotExplorer {
 			if (!view.collapsed || view.show_sidebar) {
 				refresh_folders.begin ();
 			} else {
-				snapshots.refresh.begin ();
+				refresh_snapshots.begin ();
 			}
+		}
+
+		private async void refresh_snapshots () {
+			var refreshed = yield snapshots.refresh ();
+			if (!refreshed) {
+				return;
+			}
+			toast_overlay.add_toast (new Adw.Toast (_("Refreshed snapshots.")) {
+				timeout = 2,
+			});
 		}
 
 		private void on_about () {

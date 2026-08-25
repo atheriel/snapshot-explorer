@@ -36,9 +36,9 @@ class SnapshotPane : Gtk.Box {
 		yield refresh ();
 	}
 
-	public async void refresh () {
+	public async bool refresh () {
 		if (path == null) {
-			return;
+			return false;
 		}
 
 		current?.cancel ();
@@ -60,26 +60,26 @@ class SnapshotPane : Gtk.Box {
 				break;
 			default:
 				show_page ("not-supported", cancellable);
-				return;
+				return false;
 			}
 		} catch (IOError.CANCELLED e) {
-			return;
+			return false;
 		} catch (Fs.Error.NOT_SUPPORTED e) {
 			show_page ("not-supported", cancellable);
-			return;
+			return false;
 		} catch (Error e) {
 			error_occurred (e);
 			show_page ("error", cancellable);
-			return;
+			return false;
 		}
 
 		if (entries.length () == 0) {
 			show_page ("no-snapshots", cancellable);
-			return;
+			return true;
 		}
 
 		if (!is_current (cancellable)) {
-			return;
+			return false;
 		}
 
 		clear_snapshots ();
@@ -121,6 +121,7 @@ class SnapshotPane : Gtk.Box {
 		});
 
 		show_page ("snapshots", cancellable);
+		return true;
 	}
 
 	private void show_page (string name, Cancellable cancellable) {
