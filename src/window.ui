@@ -18,6 +18,7 @@
         <condition>max-width: 500sp</condition>
         <setter object="view" property="collapsed">True</setter>
         <setter object="show_sidebar_button" property="visible">True</setter>
+        <setter object="snapshots_menu_button" property="visible">True</setter>
       </object>
     </child>
     <property name="content">
@@ -164,6 +165,14 @@
                                 <property name="tooltip-text" translatable="yes">Show Folders</property>
                                 <property name="visible">False</property>
                                 <property name="active" bind-source="view" bind-property="show-sidebar" bind-flags="sync-create|bidirectional"/>
+                              </object>
+                            </child>
+                            <child type="end">
+                              <object class="GtkMenuButton" id="snapshots_menu_button">
+                                <property name="icon-name">open-menu-symbolic</property>
+                                <property name="tooltip-text" translatable="yes">Menu</property>
+                                <property name="visible">False</property>
+                                <property name="menu-model">menu</property>
                               </object>
                             </child>
                             <child type="end">
