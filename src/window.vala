@@ -103,7 +103,16 @@ namespace SnapshotExplorer {
 					return false;
 				}
 				var folder = (GLib.File) value.get_object ();
-				open_dropped_folder.begin (folder);
+				var path = folder.get_path ();
+				if (path == null) {
+					toast_overlay.add_toast (
+						new Adw.Toast (
+							_("Only local files and folders can be explored.")
+						)
+					);
+					return false;
+				}
+				navigate_to((!) path);
 				return true;
 			});
 			stack.add_controller (drop_target);
@@ -191,38 +200,6 @@ namespace SnapshotExplorer {
 				);
 				warning ("Failed to open folder: %s", e.message);
 			}
-		}
-
-		private async void open_dropped_folder (GLib.File folder) {
-			var path = folder.get_path ();
-			if (path == null) {
-				toast_overlay.add_toast (
-					new Adw.Toast (
-						_("Only local files and folders can be explored.")
-					)
-				);
-				return;
-			}
-
-			try {
-				var info = yield folder.query_info_async (
-					FileAttribute.STANDARD_TYPE, FileQueryInfoFlags.NONE
-				);
-				if (info.get_file_type () != FileType.DIRECTORY) {
-					toast_overlay.add_toast (
-						new Adw.Toast (_("Please select a folder."))
-					);
-					return;
-				}
-			} catch (Error e) {
-				toast_overlay.add_toast (
-					new Adw.Toast (_("Could not inspect the dropped item."))
-				);
-				warning ("Failed to inspect dropped item: %s", e.message);
-				return;
-			}
-
-			navigate_to ((!) path);
 		}
 
 		private void navigate_to (string path) {
