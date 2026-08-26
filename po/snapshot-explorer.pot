@@ -8,24 +8,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: snapshot-explorer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-20 22:25-0400\n"
+"POT-Creation-Date: 2026-08-26 00:26-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: data/org.github.atheriel.snapshot-explorer.desktop.in.in:3
 #: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:6
-#: src/window.ui:15 src/window.vala:127
+#: src/window.ui:15 src/window.vala:283
 msgid "Snapshot Explorer"
 msgstr ""
 
 #: data/org.github.atheriel.snapshot-explorer.desktop.in.in:4
 #: data/org.github.atheriel.snapshot-explorer.metainfo.xml.in.in:7
-#: src/window.vala:130
+#: src/window.vala:286
 msgid "Browse local ZFS snapshots using the system file manager"
 msgstr ""
 
@@ -36,40 +36,40 @@ msgid ""
 "manager."
 msgstr ""
 
-#: nautilus/extension.vala:56
+#: nautilus/extension.vala:67
 #, c-format
 msgid "Browsing snapshot of %s on %s."
 msgstr ""
 
-#: nautilus/extension.vala:75
+#: nautilus/extension.vala:90
 msgid "Restore to..."
 msgstr ""
 
-#: nautilus/extension.vala:76
+#: nautilus/extension.vala:91
 msgid "Restore this item from the snapshot."
 msgstr ""
 
-#: nautilus/extension.vala:80
+#: nautilus/extension.vala:95
 msgid "Select Restore Destination"
 msgstr ""
 
-#: nautilus/extension.vala:81
+#: nautilus/extension.vala:96
 msgid "Restore"
 msgstr ""
 
-#: nautilus/extension.vala:81
+#: nautilus/extension.vala:96
 msgid "Close"
 msgstr ""
 
-#: src/fs.vala:51 src/snapshot-pane.ui:63
+#: src/fs.vala:55 src/snapshot-pane.ui:76
 msgid "Today"
 msgstr ""
 
-#: src/fs.vala:54 src/snapshot-pane.ui:75
+#: src/fs.vala:58 src/snapshot-pane.ui:88
 msgid "Yesterday"
 msgstr ""
 
-#: src/fs.vala:67
+#: src/fs.vala:71
 #, c-format
 msgid "%s at %s"
 msgstr ""
@@ -82,15 +82,19 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/gtk/help-overlay.ui:23
-msgid "Reload folders and snapshots"
+#: src/gtk/help-overlay.ui:23 src/window.vala:186
+msgid "Open Folder"
 msgstr ""
 
 #: src/gtk/help-overlay.ui:30
+msgid "Reload folders and snapshots"
+msgstr ""
+
+#: src/gtk/help-overlay.ui:37
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: src/gtk/help-overlay.ui:37 src/window.ui:183
+#: src/gtk/help-overlay.ui:44 src/window.ui:200
 msgid "Quit"
 msgstr ""
 
@@ -120,87 +124,148 @@ msgstr ""
 msgid "Only folders on ZFS filesystems are supported."
 msgstr ""
 
-#: src/snapshot-pane.ui:87
+#: src/snapshot-pane.ui:61
+msgid "Unable to Load Snapshots"
+msgstr ""
+
+#: src/snapshot-pane.ui:62
+msgid "An error occurred while reading the ZFS snapshots."
+msgstr ""
+
+#: src/snapshot-pane.ui:100
 msgid "Earlier This Week"
 msgstr ""
 
-#: src/snapshot-pane.ui:99
+#: src/snapshot-pane.ui:112
 msgid "Earlier This Year"
 msgstr ""
 
-#: src/snapshot-pane.ui:111
+#: src/snapshot-pane.ui:124
 msgid "Previous Years"
 msgstr ""
 
-#: src/snapshot-row.ui:18
+#: src/snapshot-row.ui:24
 msgid "Browse in file manager"
 msgstr ""
 
-#: src/window.ui:41 src/window.ui:72 src/window.ui:115
+#: src/window.ui:42 src/window.ui:73 src/window.ui:116 src/window.ui:158
 msgid "Menu"
 msgstr ""
 
-#: src/window.ui:49
+#: src/window.ui:50
 msgid "Loading"
 msgstr ""
 
-#: src/window.ui:50
+#: src/window.ui:51
 msgid "Searching for mounted ZFS filesystems..."
 msgstr ""
 
-#: src/window.ui:80
+#: src/window.ui:81
 msgid "No Datasets"
 msgstr ""
 
-#: src/window.ui:81
+#: src/window.ui:82
 msgid "No mounted ZFS filesystems found."
 msgstr ""
 
-#: src/window.ui:102
+#: src/window.ui:103
 msgid "Folders"
 msgstr ""
 
-#: src/window.ui:108
-msgid "Refresh folder list"
+#: src/window.ui:109 src/window.ui:184
+msgid "Open Folder…"
 msgstr ""
 
-#: src/window.ui:143
+#: src/window.ui:144
 msgid "Snapshots"
 msgstr ""
 
-#: src/window.ui:149
+#: src/window.ui:150
 msgid "Show Folders"
 msgstr ""
 
-#: src/window.ui:175
+#: src/window.ui:188
+msgid "Refresh"
+msgstr ""
+
+#: src/window.ui:192
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: src/window.ui:179
+#: src/window.ui:196
 msgid "About Snapshot Explorer"
 msgstr ""
 
-#: src/window.vala:64 src/window.vala:69
+#: src/window.vala:72 src/window.vala:77
 msgid "Loading..."
 msgstr ""
 
-#: src/window.vala:92
+#: src/window.vala:110
+msgid "Only local files and folders can be explored."
+msgstr ""
+
+#: src/window.vala:135
 msgid "ZFS Datasets"
 msgstr ""
 
-#: src/window.vala:104
-msgid "Refreshed folders."
+#: src/window.vala:153
+msgid "Refreshed mounted ZFS datasets."
+msgstr ""
+
+#: src/window.vala:167
+msgid "Other"
+msgstr ""
+
+#: src/window.vala:199
+msgid "Could not open the selected folder."
+msgstr ""
+
+#: src/window.vala:276
+msgid "Refreshed snapshots."
 msgstr ""
 
 #. Translators: replace this with your name(s), one per line, to
 #. be credited in the About dialog. It is not shown when
 #. untranslated.
-#: src/window.vala:138
+#: src/window.vala:294
 msgid "translator-credits"
 msgstr ""
 
 #. Translators: the heading of a section on the Legal page of the
 #. About dialog, covering the parts under a different licence.
-#: src/window.vala:145
+#: src/window.vala:305
 msgid "Nautilus Extension and Shared Components"
+msgstr ""
+
+#: src/zfs.vala:53
+#, c-format
+msgid "Failed to list mounted ZFS filesystems: %s"
+msgstr ""
+
+#: src/zfs.vala:205
+#, c-format
+msgid "Failed to query ZFS snapshots: %s"
+msgstr ""
+
+#: src/zfs.vala:245
+#, c-format
+msgid "Failed to determine ZFS mountpoint containing \"%s\": %s"
+msgstr ""
+
+#: src/zfs.vala:252
+msgid "No ZFS CLI available."
+msgstr ""
+
+#: src/zfs.vala:257
+#, c-format
+msgid "Unexpected or malformed '%s' output."
+msgstr ""
+
+#: src/zfs.vala:263
+#, c-format
+msgid "'%s' failed with status %d."
+msgstr ""
+
+#: src/zfs.vala:268
+msgid "Not a ZFS filesystem."
 msgstr ""
