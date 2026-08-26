@@ -23,8 +23,10 @@ class SnapshotPane : Gtk.Box {
 	private Cancellable? current = null;
 	private string? path = null;
 	private Fs.Type fs_type = Fs.Type.UNKNOWN;
+	private bool bus_initialised = false;
 
 	public signal void error_occurred (Error error);
+	private signal void bus_start_finished ();
 
 	construct {
 		start_bus.begin ();
@@ -76,6 +78,15 @@ class SnapshotPane : Gtk.Box {
 		if (entries.length () == 0) {
 			show_page ("no-snapshots", cancellable);
 			return true;
+		}
+
+		if (!bus_initialised) {
+			ulong handler_id = 0;
+			handler_id = bus_start_finished.connect (() => {
+				SignalHandler.disconnect (this, handler_id);
+				refresh.callback ();
+			});
+			yield;
 		}
 
 		if (!is_current (cancellable)) {
@@ -161,5 +172,8 @@ class SnapshotPane : Gtk.Box {
 		} catch (IOError e) {
 			print ("failed to connect to dbus: %s", e.message);
 		}
+
+		bus_initialised = true;
+		bus_start_finished ();
 	}
 }
