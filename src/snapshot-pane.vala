@@ -93,20 +93,44 @@ class SnapshotPane : Gtk.Box {
 			return false;
 		}
 
+
+		FileInfo? info;
+		try {
+			info = yield File.new_for_path ((!) path).
+				query_info_async (
+					FileAttribute.STANDARD_TYPE,
+					FileQueryInfoFlags.NONE,
+					Priority.DEFAULT,
+					cancellable
+				);
+		} catch (IOError.CANCELLED e) {
+			return false;
+		} catch (Error e) {
+			error_occurred (e);
+			show_page ("error", cancellable);
+			return false;
+		}
+
+		if (!is_current (cancellable)) {
+			return false;
+		}
+
 		clear_snapshots ();
 
 		entries.@foreach ((e) => {
 			Fs.Snapshot entry = (!) e;
-			var row = new SnapshotRow (entry);
-			if (fm != null) {
-				row.browse.clicked.connect(() => {
-					try {
-						((!) fm).show_folders({ entry.uri }, "");
-					} catch (Error e) {
-						error_occurred (e);
-					};
-				});
-			}
+			var row = new SnapshotRow (entry, (!) info);
+			row.browse.clicked.connect(() => {
+				try {
+					if (row.info.get_file_type () == FileType.DIRECTORY) {
+						fm?.show_folders({ row.entry.uri }, "");
+					} else {
+						fm?.show_items({ row.entry.uri }, "");
+					}
+				} catch (Error e) {
+					error_occurred (e);
+				};
+			});
 			switch (entry.timestamp ().range) {
 			case Fs.Snapshot.AgeRange.TODAY:
 				today.append (row);
